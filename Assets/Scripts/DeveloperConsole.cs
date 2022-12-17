@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
+using Object = UnityEngine.Object;
 
 public class DeveloperConsole : MonoBehaviour
 {
@@ -9,7 +11,7 @@ public class DeveloperConsole : MonoBehaviour
 
     // The input field where users can type their commands
     [SerializeField]
-    private TextMeshProUGUI inputField;
+    private TMP_InputField inputField;
     private string inputText => inputField.text;
 
     // The list of available commands
@@ -21,16 +23,31 @@ public class DeveloperConsole : MonoBehaviour
         // Add some sample commands to the list of available commands
         commands.Add("spawn", new SpawnCommand());
         commands.Add("kill", new KillCommand());
+        commands.Add("move", new MoveCommand());
     }
 
     void Update()
     {
         // Toggle the console when the '~' key is pressed
-        if (Input.GetKeyDown(KeyCode.BackQuote)) 
-            isOpen = !isOpen;
+        if (Input.GetKeyDown(KeyCode.BackQuote))
+            EnableConsole(!isOpen);
 
+
+        // Process command when 'return' is pressed
         if (Input.GetKeyDown(KeyCode.Return) && isOpen)
             CallCommand();
+    }
+
+    public void EnableConsole(bool active = true) {
+        isOpen = active;
+        inputField.gameObject.SetActive(isOpen);
+        Time.timeScale = isOpen ? 0f : 1f;
+
+        if (!isOpen) return;
+
+        // Set focus if console is open
+        inputField.Select();
+        inputField.ActivateInputField();
     }
 
     public void CallCommand()
@@ -38,7 +55,7 @@ public class DeveloperConsole : MonoBehaviour
         if (!isOpen) return;
 
         // Split the input into words, separated by spaces
-        string[] words = inputText.Split(' ');
+        string[] words = Array.ConvertAll(inputText.Split(' '), s => s.Replace("_", " "));
 
         // The first word is the command name
         string commandName = words[0];
@@ -59,6 +76,7 @@ public class DeveloperConsole : MonoBehaviour
         else
         {
             Debug.Log("Unknown command: " + commandName);
+            EnableConsole(false);
         }
 
         // Clear the input field
@@ -80,21 +98,48 @@ public class SpawnCommand : Command
     {
         if (args.Length != 3)
         {
-            Debug.Log("Usage: spawn x y z");
+            Debug.Log($"Usage: spawn 'name' 'x' 'y'" +
+                $"\nargs[{args.Length}]");
             return;
         }
 
-        float x = float.Parse(args[0]);
-        float y = float.Parse(args[1]);
-        float z = float.Parse(args[2]);
+        // Load the unit from Resources
+        GameObject prefab = Resources.Load<GameObject>($"Units/{args[0]}");
+        if (!prefab) {
+            Debug.LogWarning($"Unit '{args[0]}' was not found.");
+            return;
+        }
 
-        Vector3 position = new Vector3(x, y, z);
+        float x = float.Parse(args[1]);
+        float y = float.Parse(args[2]);
 
-        // Load the prefab from Resources
-        GameObject prefab = Resources.Load<GameObject>("PrefabName");
+        // Instantiate the unit at the given position
+        Object.Instantiate(prefab, new Vector2(Mathf.Floor(x) + .5f, Mathf.Floor(y) + .5f), 
+            Quaternion.identity);
+    }
+}
 
-        // Instantiate the prefab at the given position
-        Object.Instantiate(prefab, position, Quaternion.identity);
+public class MoveCommand : Command
+{
+    public override void Execute(string[] args)
+    {
+        if (args.Length != 3)
+        {
+            Debug.Log($"Usage: move 'name' 'x' 'y'" +
+                $"\nargs[{args.Length}]");
+            return;
+        }
+
+        GameObject obj = GameObject.Find(args[0]);
+        if (!obj) {
+            Debug.LogWarning($"Object '{args[0]}' was not found.");
+            return;
+        }
+
+        float x = float.Parse(args[1]);
+        float y = float.Parse(args[2]);
+
+        obj.transform.position = new Vector2(Mathf.Floor(x) + .5f, Mathf.Floor(y) + .5f);
     }
 }
 
@@ -104,13 +149,13 @@ public class KillCommand : Command
     {
         if (args.Length != 1)
         {
-            Debug.Log("Usage: kill 'unit name'");
+            Debug.Log($"Usage: kill 'unit name' \nargs[{args.Length}]");
             return;
         }
 
         GameObject obj = GameObject.Find(args[0]);
         if (!obj) {
-            Debug.LogWarning($"Object of name {args[0]} was found.");
+            Debug.LogWarning($"Object '{args[0]}' was not found.");
             return;
         }
 
