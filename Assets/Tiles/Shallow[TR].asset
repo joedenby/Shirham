@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13b75c95f34a00d4e8c04f76b73312e6, type: 3}
+  m_Name: Shallow[TR]
+  m_EditorClassIdentifier: 
+  m_AnimatedSprites:
+  - {fileID: 1250343940, guid: 3c3862886c137ff40bd00797e5e6956b, type: 3}
+  - {fileID: 1649938497, guid: 3c3862886c137ff40bd00797e5e6956b, type: 3}
+  - {fileID: 670700056, guid: 3c3862886c137ff40bd00797e5e6956b, type: 3}
+  - {fileID: -970362329, guid: 3c3862886c137ff40bd00797e5e6956b, type: 3}
+  m_MinSpeed: 3
+  m_MaxSpeed: 3
+  m_AnimationStartTime: 0
+  m_AnimationStartFrame: 0
+  m_TileColliderType: 2

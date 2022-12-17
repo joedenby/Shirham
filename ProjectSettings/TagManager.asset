@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Fade
+  - Enemy
+  - Destroy
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Obstacle
+  - Water
+  - UI
+  - Unit
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Lowest
+    uniqueID: 455445011
+    locked: 0
+  - name: Low
+    uniqueID: 453464873
+    locked: 0
+  - name: Element
+    uniqueID: 2038150215
+    locked: 0
+  - name: Medium
+    uniqueID: 1582569637
+    locked: 0
+  - name: High
+    uniqueID: 2231422873
+    locked: 0
+  - name: Highest
+    uniqueID: 734644033
+    locked: 0

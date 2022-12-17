@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6721dd9807b92404c9ead8a9528e4e35, type: 3}
+  m_Name: Science (Force)
+  m_EditorClassIdentifier: 
+  name: 'Science Book: Force'
+  description: Part of a series of books that describe the natural wonder of sience.
+  weight: 0.5
+  price: 5
+  title: Force
+  firstEdition: 0
+  text: "It has been long apparent to the old ones that rules govern the universe.
+    Similarities can be drawn between our ancestor\u2019s home world and the one
+    we occupy today. Should we drop an fleshberry, will it not fall? Pre-event accounts
+    tell of a man sitting in the shade of a tree, before a fruit falls from above,
+    striking his head. At this moment, it is believed humanities most significant
+    epiphany occurred --things fall when you let go of them.\r\n\r\nGravity as it
+    was to be named, make one of many so called 'Forces'. A force is merely a non-magical
+    law that when combined with others form the world around us. Rub two sticks together
+    and you create heat, that would be friction. Put a chicken between two boulders
+    and the chicken is destroyed, we call this force crushing. But why should we
+    care about these forces?\r\n\r\nUnlike our fortunate elvish comrades, we're not
+    gifted with magical ability, nor do we possess extensive physical prowess like
+    the orcs. What do humans have that they do not? Sience. Collective study of non-magical
+    laws can be a powerful tool when utilized and the study of force is an important
+    foundation in which all other laws follow."
