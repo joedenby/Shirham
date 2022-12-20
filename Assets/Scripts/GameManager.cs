@@ -251,7 +251,7 @@ namespace GameManager
         {
             private static GameObject CurrentMap;
             private static Tilemap ElementLayer;
-            private static Dictionary<TileBase, ElementalType> tiles = new Dictionary<TileBase, ElementalType>();
+            private static Dictionary<TileBase, ElementalType> tiles = new();
 
             [RuntimeInitializeOnLoadMethod]
             private static void OnLoad()
@@ -566,7 +566,6 @@ namespace GameManager
             }
         }
 
-
     }
     namespace Battle
     {
@@ -650,7 +649,8 @@ namespace GameManager
                 }
 
                 //Get UnitChoices for this turnset.
-                if (TurnOrder.Count() == 0) StackTurnOrder();
+                if (TurnOrder.Count() == 0) 
+                    StackTurnOrder();
 
                 CurrentUnit = TurnOrder.Pop();
                 if (CurrentUnit.combatant.isDead)
@@ -859,12 +859,12 @@ namespace GameManager
                 InhabitedSquares.Clear();   //Clear Inhabited list
 
                 var playerPos = player.transform.position;  //Get Player position
-                Vector2 start = new Vector2(playerPos.x - Mathf.Abs(size / 2),   // x
+                Vector2 start = new (playerPos.x - Mathf.Abs(size / 2),   // x
                                                 playerPos.y - Mathf.Abs(size / 2)); // y
 
                 for (int y = 0; y < size; y++) {
                     for (int x = 0; x < size; x++) {
-                        Vector2 location = new Vector2(start.x + x, start.y + y); //Get next location
+                        Vector2 location = new (start.x + x, start.y + y); //Get next location
                         if (ValidSquareLocation(location))
                         {    //Is the location inhabitable?
                             //Create new square at location
@@ -1024,17 +1024,17 @@ namespace GameManager
              * 
              * return bool
              */
-            public static BattleSquare[] GetMoveSquares(UnitController unit, Pattern pattern)
+            public static BattleSquare[] GetMoveSquares(UnitController unit)
             {
                 List<BattleSquare> squares = new List<BattleSquare>();
                 var pmSQ = GetSquareViaUnit(unit);
                 var pmVector = Coordinates(pmSQ);
+                Pattern pattern = unit.combatant.Movement.pattern;
 
                 
                 //For every element in sequence of patterns
                 foreach (Vector2 element in pattern.sequence)
                 {
-                    var previous = pmSQ;
 
                     //Over specified iterations
                     for (int i = 1; i <= pattern.iterations; i++)
@@ -1051,13 +1051,6 @@ namespace GameManager
 
                             if (sq)
                             {
-                                //Can't be more than 1 away from previous square
-                            //    Debug.Log($"Distance: {Vector2.Distance(previous.transform.position, sq.transform.position)} " +
-                             //       $"Break: {Vector2.Distance(previous.transform.position, sq.transform.position) > 1.5f}");
-                             //   if (Vector2.Distance(previous.transform.position, sq.transform.position) > 1.5f)
-                              //      break;
-
-                                previous = sq;
 
                                 //Is this square inhabited
                                 if (sq.ContainsUnits())
@@ -1661,7 +1654,7 @@ namespace GameManager
                 foreach (string e in elements)
                 {
                     if (string.IsNullOrEmpty(e)) continue;
-                    switch (e.Substring(0, 3).ToLower())
+                    switch (e[..3].ToLower())
                     {
                         case "tru": return ElementalType.True;
                         case "rot": return ElementalType.Rot;
@@ -1673,7 +1666,6 @@ namespace GameManager
                         case "ice": return ElementalType.Ice;
                         case "wtr": return ElementalType.Water;
                         case "elc": return ElementalType.Electric;
-
                     }
                 }
 

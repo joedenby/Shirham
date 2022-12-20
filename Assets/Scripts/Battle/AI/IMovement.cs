@@ -19,7 +19,7 @@ public class IMovement : IModule
         BattleSquare center = BattleGrid.GetSquareViaUnit(unit);
 
         //Get all possible movement squares
-        BattleSquare[] squares = BattleGrid.GetMoveSquares(unit, unit.combatant.Movement.pattern);
+        BattleSquare[] squares = BattleGrid.GetMoveSquares(unit);
 
         desiredSquare = null;   
         float confidence = 0;

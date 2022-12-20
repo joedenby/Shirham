@@ -15,7 +15,7 @@ public class InteractionFinder : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 pos = CameraController.main.Camera.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         pos = new Vector2(Mathf.Floor(pos.x) + 0.5f, Mathf.Floor(pos.y) + 0.5f);
         Collider2D[] colliders = Physics2D.OverlapCircleAll(pos, 0.5f);
         if (colliders.Length == 0) return;

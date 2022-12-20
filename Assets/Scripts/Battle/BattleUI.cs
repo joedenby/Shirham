@@ -23,6 +23,7 @@ public class BattleUI : UIComponent
         switch (menu) {
             case BattleUIMenu.Move:
                 BattleEvent.SquareCallEvent += GoBack;
+                BattleGrid.GetMoveSquares(BattleSystem.GetCurrentUnit());
                 break;
             case BattleUIMenu.Attack:
 
@@ -48,6 +49,7 @@ public class BattleUI : UIComponent
         battleInput.Enable();
         SetMenu(BattleUIMenu.Home);
         BattleEvent.PartyMemberChangeEvent += GoBack;
+        SetAnchorPosition();
         gameObject.SetActive(true);
     }
 
@@ -77,7 +79,7 @@ public class BattleUI : UIComponent
         }
 
         var combatant = BattleSystem.GetCurrentUnit().combatant;
-        BattleSquare[] squares = BattleGrid.GetMoveSquares(BattleSystem.GetCurrentUnit(), combatant.Movement.pattern);
+        BattleSquare[] squares = BattleGrid.GetMoveSquares(BattleSystem.GetCurrentUnit());
         BattleGrid.SetGridState(BattleSquare.BattleSquareState.Selectable, squares);
     }
 

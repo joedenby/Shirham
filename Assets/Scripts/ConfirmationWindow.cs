@@ -64,9 +64,7 @@ public class ConfirmationWindow : UIWindow
     private void SetWindowPosition() { 
         if(!Instance) return;
 
-        Camera cam = CameraController.main.Camera;
-        Vector2 center = cam.ScreenToWorldPoint(new Vector2(Screen.width * 0.6f, Screen.height * 0.5f));
-        transform.position = center;
+        transform.position = (Vector2)CameraController.main.transform.position;
     }
 
     private static void AssignPrefab() {

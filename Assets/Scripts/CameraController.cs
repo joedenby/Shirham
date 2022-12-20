@@ -4,7 +4,7 @@ using UnityEngine.Experimental.Rendering.Universal;
 
 public class CameraController : MonoBehaviour
 {
-    public Camera Camera => GetComponent<Camera>();
+    public PixelPerfectCamera Camera => GetComponent<PixelPerfectCamera>();
     public static CameraController main { get; private set; }
     private void Awake() => main = this;
 
@@ -14,11 +14,6 @@ public class CameraController : MonoBehaviour
     public bool cameraLock = false;
     public bool cameraZoom { get; private set; }
 
-    private PixelPerfectCamera pixelCamera;
-
-
-    // Start is called before the first frame update
-    void Start() => pixelCamera = GetComponent<PixelPerfectCamera>();
 
     private void FixedUpdate()
     {
@@ -39,13 +34,13 @@ public class CameraController : MonoBehaviour
     public void ZoomCamera(bool zoom) {
         cameraZoom = zoom;
         if (cameraZoom) {
-            pixelCamera.refResolutionX = 320;
-            pixelCamera.refResolutionY = 180;
+            Camera.refResolutionX = 320;
+            Camera.refResolutionY = 180;
             return;
         }
 
-        pixelCamera.refResolutionX = 640;
-        pixelCamera.refResolutionY = 360;
+        Camera.refResolutionX = 640;
+        Camera.refResolutionY = 360;
     }
 
     public void CenterBounds(IEnumerable<Component> objects) {
