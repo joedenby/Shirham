@@ -20,9 +20,7 @@ namespace GameManager
          */
         static class Runtime
         {
-            public static UnitController Player;
-            public static UnitController[] Party = new UnitController[0];
-            public static List<EnemyUnit> EnemyUnits = new List<EnemyUnit>();
+            
 
             [RuntimeInitializeOnLoadMethod]
             private static void OnLoad()
@@ -33,71 +31,7 @@ namespace GameManager
                 cam.name = "MainCamera";
             }
 
-            /**
-             * Assigns external unit as the Player object. The gameObject
-             * that is passed as parameter must have UnitController component
-             * to work.
-             * 
-             * @param GameObject
-             */
-            public static void SetPlayer(GameObject playableObj)
-            {
-                var controller = playableObj.GetComponent<UnitController>();
-                if (!controller)
-                {
-                    Debug.LogError(playableObj.name + " does not have <UnitController> component, " +
-                        "and so can't be assigned as playable.");
-                    return;
-                }
-                if (Player) Player.tag = "Untagged";
-                playableObj.tag = "Player";
-                Player = controller;
-
-                CameraController.main.target = Player.transform;
-            }
-
-            public static UnitController[] FullParty()
-            {
-                UnitController[] full = new UnitController[Party.Length + 1];
-                full[0] = Player;
-                for (int i = 0; i < full.Length; i++)
-                    full[i] = (i == 0) ? Player : Party[i - 1];
-
-                return full;
-            }
-
-            /**
-             * Add Unit to Party array and assigns them the nearest
-             * ally to follow.
-             * 
-             * @param UnitController
-             */
-            public static void AssignPartyMemeber(UnitController unit)
-            {
-                if (!unit) return;
-
-                unit.pathFinder.GoTo(Party.Length >= 1 ? Party[Party.Length - 1].transform : Player.transform, true);
-                unit.pathFinder.nextToTarget = true;
-                List<UnitController> party = Party.ToList();
-                party.Add(unit);
-                Party = party.ToArray();
-            }
-
-            /**
-             * Remove Unit from Party array. Removed units stop following
-             * any previously assigned target.
-             * 
-             * @param UnitController
-             */
-            public static void RemovePartyMemeber(UnitController unit)
-            {
-                if (!unit) return;
-
-                unit.pathFinder.targetLock = false;
-                List<UnitController> party = Party.ToList();
-                party.Remove(unit);
-                Party = party.ToArray();
-            }
+           
         }
 
         /*===============================================
@@ -404,9 +338,10 @@ namespace GameManager
              */
             public static void SetWayPoint(Vector2 location)
             {
+                var player = Units.UnitManager.Player;
                 if (!ValidWayPoint()) return;
-                if (!Runtime.Player) return;
-                if (Vector2.Distance(Runtime.Player.transform.position, location) < 0.5f) return;
+                if (!player) return;
+                if (Vector2.Distance(player.transform.position, location) < 0.5f) return;
 
                 int x = Mathf.FloorToInt(location.x);
                 int y = Mathf.FloorToInt(location.y);
@@ -415,12 +350,12 @@ namespace GameManager
                 if (pointObj) Object.Destroy(pointObj);
                 pointObj = Object.Instantiate(Resources.Load<GameObject>("Misc/MovePoint"));
                 pointObj.transform.position = newLoc;
-                Runtime.Player.pathFinder.GoTo(pointObj.transform);
+                player.pathFinder.GoTo(pointObj.transform);
             }
 
             private static async void MovePlayer(bool active) {
-                if (!Runtime.Player) return;
-                Runtime.Player.movementOverride = active;
+                if (!Units.UnitManager.Player) return;
+                Units.UnitManager.Player.movementOverride = active;
             }
 
             /**
@@ -472,8 +407,8 @@ namespace GameManager
             {
                 if (!pointObj) return;
 
-                if(Runtime.Player) {
-                    Runtime.Player.pathFinder.Clear();
+                if(Units.UnitManager.Player) {
+                    Units.UnitManager.Player.pathFinder.Clear();
                 }
                 Object.Destroy(pointObj);
                 pointObj = null;
@@ -481,16 +416,21 @@ namespace GameManager
 
         }
     }
+    
     namespace Units
     {
         /*===============================================
          *================= UNIT MANAGER ================
          *===============================================
-         *  Class for external Unit functionality and
+         *  Class for Unit functionality and
          *  behaviour.
          */
         static class UnitManager
         {
+            public static UnitController Player;
+            public static UnitController[] Party = new UnitController[0];
+            public static List<EnemyUnit> EnemyUnits = new List<EnemyUnit>();
+
             /**
              * Uses UnitInstance type to spawn unit based on ID
              * at specified location. 
@@ -512,11 +452,77 @@ namespace GameManager
                 newUnit.name = $"{unitObj.name} [U]";
 
                 if (unitInstance.isPlayable) {
-                    Hub.Runtime.SetPlayer(newUnit);
+                    SetPlayer(newUnit);
                 }
                     
 
                 return newUnit.GetComponent<UnitController>();
+            }
+
+            /**
+            * Assigns external unit as the Player object. The gameObject
+            * that is passed as parameter must have UnitController component
+            * to work.
+            * 
+            * @param GameObject
+            */
+            public static void SetPlayer(GameObject playableObj)
+            {
+                var controller = playableObj.GetComponent<UnitController>();
+                if (!controller)
+                {
+                    Debug.LogError(playableObj.name + " does not have <UnitController> component, " +
+                        "and so can't be assigned as playable.");
+                    return;
+                }
+                if (Player) Player.tag = "Untagged";
+                playableObj.tag = "Player";
+                Player = controller;
+
+                CameraController.main.target = Player.transform;
+            }
+
+            public static UnitController[] FullParty()
+            {
+                UnitController[] full = new UnitController[Party.Length + 1];
+                full[0] = Player;
+                for (int i = 0; i < full.Length; i++)
+                    full[i] = (i == 0) ? Player : Party[i - 1];
+
+                return full;
+            }
+
+            /**
+             * Add Unit to Party array and assigns them the nearest
+             * ally to follow.
+             * 
+             * @param UnitController
+             */
+            public static void AssignPartyMemeber(UnitController unit)
+            {
+                if (!unit) return;
+
+                unit.pathFinder.GoTo(Party.Length >= 1 ? Party[Party.Length - 1].transform : Player.transform, true);
+                unit.pathFinder.nextToTarget = true;
+                List<UnitController> party = Party.ToList();
+                party.Add(unit);
+                Party = party.ToArray();
+            }
+
+            /**
+             * Remove Unit from Party array. Removed units stop following
+             * any previously assigned target.
+             * 
+             * @param UnitController
+             */
+            public static void RemovePartyMemeber(UnitController unit)
+            {
+                if (!unit) return;
+
+                unit.pathFinder.targetLock = false;
+                List<UnitController> party = Party.ToList();
+                party.Remove(unit);
+                Party = party.ToArray();
             }
 
             public static void SetUnitTargetLock(bool locked, params UnitController[] units)
@@ -593,7 +599,7 @@ namespace GameManager
                 //Add Enemy to battle
                 foreach (EnemyUnit enemy in enemyArr)
                 {
-                    enemy.FaceLocation(Hub.Runtime.Player.transform.position);
+                    enemy.FaceLocation(Units.UnitManager.Player.transform.position);
                     enemy.AnimationTrigger("Suprise");
                     Enemies.Add(enemy);
                 }
@@ -612,7 +618,7 @@ namespace GameManager
 
             private static async void SetUpBattle()
             {
-                Hub.Runtime.Player.StopMoving();
+                Units.UnitManager.Player.StopMoving();
                 InputManager.PlayerInput().Disable();
                 SetUpGrid();
 
@@ -623,7 +629,7 @@ namespace GameManager
                 CameraController.main.cameraLock = true;
                 CameraController.main.ZoomCamera(false);
 
-                Party = new List<UnitController>(Hub.Runtime.FullParty());
+                Party = new List<UnitController>(Units.UnitManager.FullParty());
                 Units.UnitManager.SetUnitTargetLock(false, Party.ToArray());
 
                 //Party Starting Positions
@@ -761,7 +767,7 @@ namespace GameManager
                 var max = 6f;   // Always minimum 8x8 grid
                 foreach (EnemyUnit unit in Enemies)
                 {
-                    var dist = Vector2.Distance(Hub.Runtime.Player.transform.position, unit.transform.position);
+                    var dist = Vector2.Distance(Units.UnitManager.Player.transform.position, unit.transform.position);
                     max = (dist > max) ? dist : max;
                     if (max > 8) break; //Max possible size of grid will be 8
                 }
@@ -851,7 +857,7 @@ namespace GameManager
              */
             public static void NewGrid(int size)
             {
-                var player = Hub.Runtime.Player;    //Get Player
+                var player = Units.UnitManager.Player;    //Get Player
                 if (!player) return;    //Can't center grid with no player.
 
                 ClearGrid();    //Destroy any previous grid
@@ -1086,24 +1092,7 @@ namespace GameManager
                 return squares.ToArray();
             }
 
-            public static UnitController[] GetUnitsInPattern(BattleSquare center, Pattern pattern)
-            {
-                List<UnitController> units = new List<UnitController>();
-                BattleSquare[] squares = GetSquares(center, pattern);
-
-                foreach (BattleSquare sq in squares)
-                {
-                    UnitController[] contents = sq.GetInhabitedUnits();
-                    foreach (UnitController u in contents)
-                    {
-                        units.Add(u);
-                    }
-                }
-
-                return units.ToArray();
-            }
-
-            public static UnitController[] GetUnitsInPattern(BattleSquare center, Pattern pattern, bool playerUnits)
+            public static UnitController[] GetUnitsInPattern(BattleSquare center, Pattern pattern, bool playerUnits = false)
             {
                 List<UnitController> units = new List<UnitController>();
                 BattleSquare[] squares = GetSquares(center, pattern);
@@ -1290,7 +1279,7 @@ namespace GameManager
             public static BattleSquare[] PartyStartingPositions()
             {
                 int size = GridObjs.GetLength(1);   //Get size of grid
-                int partySize = Hub.Runtime.FullParty().Length; //Get size of Party
+                int partySize = Units.UnitManager.FullParty().Length; //Get size of Party
                 int y = ((size + partySize) / 3) + 1;   //Find center of y
 
                 Vector2 posDifference = BattleSystem.GetClosestEnemy().transform.position - BattleSystem.Party[0].transform.position;

@@ -1,5 +1,5 @@
+using GameManager.Units;
 using GameManager.Hub;
-using GameManager;
 using UnityEngine;
 
 
@@ -45,7 +45,7 @@ public class UnitController : MonoBehaviour
 
     public Vector2 NextVectorMoveOverride() { 
         if (isMoving) return desiredLocation;
-        var direction = InputManager.PlayerInput().Move.ReadValue<Vector2>();
+        var direction = GameManager.InputManager.PlayerInput().Move.ReadValue<Vector2>();
         if (Mathf.Abs(direction.x) == Mathf.Abs(direction.y)) {
             var x = (direction.x > 0 ? 1f : -1f);
             var y = (direction.y > 0 ? 1 : -1f);
@@ -102,8 +102,8 @@ public class UnitController : MonoBehaviour
     }
 
     public bool IsPlayer()  {
-        if (!Runtime.Player) return false;
-        return Runtime.Player.Equals(this);
+        if (!UnitManager.Player) return false;
+        return UnitManager.Player.Equals(this);
     }
 
     public bool IsEnemy() {

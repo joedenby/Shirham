@@ -1,5 +1,5 @@
 using GameManager.Battle;
-using GameManager.Hub;
+using GameManager.Units;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -15,11 +15,11 @@ public class EnemyUnit : UnitController
 
     private void Awake() => SyncPlayerCheck();
 
-    private void OnDestroy() => Runtime.EnemyUnits.Remove(this);
+    private void OnDestroy() => UnitManager.EnemyUnits.Remove(this);
 
     private void OnEnable() {
-        if (Runtime.EnemyUnits.Contains(this)) return;
-        Runtime.EnemyUnits.Add(this);
+        if (UnitManager.EnemyUnits.Contains(this)) return;
+        UnitManager.EnemyUnits.Add(this);
 
         gameObject.layer = 2;
     }
@@ -28,7 +28,7 @@ public class EnemyUnit : UnitController
     {
         if (!gameObject.activeSelf) return;
 
-        inRange = Vector2.Distance(Runtime.Player.transform.position, transform.position) < (sightRadius * 1.5f);
+        inRange = Vector2.Distance(UnitManager.Player.transform.position, transform.position) < (sightRadius * 1.5f);
         Animate();
         Pathing();
     }
@@ -43,7 +43,7 @@ public class EnemyUnit : UnitController
 
     private bool CheckBattle() {
         if (inBattle) return true;
-        if (!Runtime.Player) return false;
+        if (!UnitManager.Player) return false;
 
 
         bool battleInProgress = BattleSystem.State == BattleState.Active;
@@ -72,7 +72,7 @@ public class EnemyUnit : UnitController
     }
 
     private bool HasPlayerSight() {
-        Vector2 dir = -(transform.position - Runtime.Player.transform.position);
+        Vector2 dir = -(transform.position - UnitManager.Player.transform.position);
         dir.y += 0.2f;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, sightRadius);
         point = hit.point;
@@ -87,6 +87,6 @@ public class EnemyUnit : UnitController
         Gizmos.color = HasPlayerSight() ? Color.red : Color.white;
         Gizmos.DrawWireSphere(transform.position, sightRadius);
         Gizmos.DrawSphere(point, 0.1f);
-        Gizmos.DrawLine((Vector2)transform.position, (Vector2)GameManager.Hub.Runtime.Player.transform.position);
+        Gizmos.DrawLine((Vector2)transform.position, (Vector2)UnitManager.Player.transform.position);
     }
 }

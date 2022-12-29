@@ -4,12 +4,15 @@
 
 //Load Unit001
 unit spawn Unit001 0 1
-unit follow Unit000_[U] Unit001
+unit assign Unit001
 
 //Load Unit002
 unit spawn Unit002 1 1
-unit follow Unit001 Unit002
+unit assign Unit002
 
 //Load Unit003
 unit spawn Unit003 0 2
-unit follow Unit002 Unit003
+unit assign Unit003
+
+//Load Unit004 (enemy)
+unit spawn Unit004 -3 3

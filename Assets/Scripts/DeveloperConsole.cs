@@ -296,6 +296,23 @@ public class Unit : Command
 
                 obj.name = args[1];
                 return;
+            case "assign":
+                if (args.Length != 2)
+                {
+                    Debug.Log($"Usage: unit assign 'name'" +
+                        $"\nargs[{args.Length}]");
+                    return;
+                }
+
+                obj = GameObject.Find(args[1]);
+                var unit = obj?.GetComponent<UnitController>();
+                if (unit == null) {
+                    Debug.LogWarning($"Unit '{args[1]}' was not found.");
+                    return;
+                }
+
+                GameManager.Units.UnitManager.AssignPartyMemeber(unit);
+                return;
             default:
                 Debug.Log("Unknown command: " + args[0]);
                 return;

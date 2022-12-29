@@ -21,7 +21,7 @@ public class TestSceneScript : MonoBehaviour
         Map.SetMap(map);
 
         var obj =  UnitManager.Instantiate(player);
-        Runtime.SetPlayer(obj.gameObject);
+        UnitManager.SetPlayer(obj.gameObject);
         InputManager.PlayerInput().Move.Enable();
 
         if (addParty) {
@@ -31,7 +31,7 @@ public class TestSceneScript : MonoBehaviour
             yield return new WaitForEndOfFrame();
 
             foreach (UnitController unit in party)
-                Runtime.AssignPartyMemeber(unit);
+                UnitManager.AssignPartyMemeber(unit);
         }
 
         AudioManager.PlayMusic("HumanVillage", true, false);

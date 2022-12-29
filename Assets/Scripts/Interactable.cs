@@ -1,5 +1,6 @@
 using UnityEngine;
 using GameManager.Hub;
+using GameManager.Units;
 
 public class Interactable : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class Interactable : MonoBehaviour
 
     public void MouseDown() {
         Navigation.DestoyWayPoint();
-        Runtime.Player.pathFinder.GoTo(NeighbouringPosition());
+        UnitManager.Player.pathFinder.GoTo(NeighbouringPosition());
     } 
 
     private Vector2 NeighbouringPosition() {

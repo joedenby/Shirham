@@ -44,7 +44,7 @@ public class CameraController : MonoBehaviour
     }
 
     public void CenterBounds(IEnumerable<Component> objects) {
-        var b = GameManager.Hub.Runtime.Player.GetComponent<CircleCollider2D>().bounds;
+        var b = GameManager.Units.UnitManager.Player.GetComponent<CircleCollider2D>().bounds;
         foreach (Component obj in objects)
         {
             b.Encapsulate(obj.GetComponent<CircleCollider2D>().bounds);
