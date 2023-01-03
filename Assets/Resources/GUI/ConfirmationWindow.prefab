@@ -512,6 +512,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41e5e6097d4fed349b28d08d935d0ce8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GUIAnchor:
+    offset: {x: 0, y: 0}
+    anchorPoint: 0
 --- !u!1 &8905471632663709534
 GameObject:
   m_ObjectHideFlags: 0
@@ -561,6 +564,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c820e7f7cb89c4f47bf907ab2c4329a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GUIAnchor:
+    offset: {x: 0, y: 0}
+    anchorPoint: 0
   size: {x: 0, y: 0}
 --- !u!212 &8905471632663709535
 SpriteRenderer:
@@ -652,6 +658,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 152b1b2f28e5c2c46aa235042dee05b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GUIAnchor:
+    offset: {x: 0, y: 0}
+    anchorPoint: 1
   size: {x: 0, y: 0}
   buttons:
   - {fileID: 8580827206613010717}

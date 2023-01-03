@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System;
 using Object = UnityEngine.Object;
+using System.Xml;
 
 namespace GameManager
 {
@@ -353,7 +354,7 @@ namespace GameManager
                 player.pathFinder.GoTo(pointObj.transform);
             }
 
-            private static async void MovePlayer(bool active) {
+            private static void MovePlayer(bool active) {
                 if (!Units.UnitManager.Player) return;
                 Units.UnitManager.Player.movementOverride = active;
             }
@@ -728,6 +729,11 @@ namespace GameManager
 
                         break;
                 }
+
+                if (casterUnit.IsEnemy()) return;
+                else if (casterUnit.combatant.MP == 0) {
+                    NextTurn();
+                } 
             }
 
             private static void StackTurnOrder()
@@ -759,6 +765,7 @@ namespace GameManager
 
                 foreach (UnitController unit in BattleUnits) {
                     TurnOrder.Push(unit);
+                    Debug.Log($"Turn: {unit}");
                 }
             }
 

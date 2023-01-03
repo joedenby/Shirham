@@ -2850,7 +2850,7 @@ SortingGroup:
   m_SortingOrder: 5
 --- !u!95 &2810931171230664311
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2867,7 +2867,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!114 &3859890971789085877
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2886,7 +2886,8 @@ MonoBehaviour:
     delay: 1
   combatant:
     Movement: {fileID: 11400000, guid: f36da7c942567ce419691292e5a48f52, type: 2}
-    Skills: []
+    Skills:
+    - {fileID: 11400000, guid: 0619229ec0047fb4da49499e61a87ef3, type: 2}
     BaseStats:
       str: 2
       mag: 5

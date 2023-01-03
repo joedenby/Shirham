@@ -6,7 +6,6 @@ public class SkillPanel : UIComponent
     [SerializeField] private SkillIcon[] skillIcons = new SkillIcon[4];
 
 
-
     public override void Enable() {
         if (!BattleSystem.GetCurrentUnit()) return;
 

@@ -18,14 +18,14 @@ public struct GUIAnchor
             default:
                 return pos + offset;
             case AnchorPoint.Bottom:
-                Debug.Log($"Pos: {pos} " +
-                    $"\nDown: {(Vector2.down * (refY / 2))} " +
-                    $"\nOffset: {offset}");
                 return pos + (Vector2.down * (refY / 2)) + offset;
             case AnchorPoint.BottomLeft:
                 pos += (Vector2.down * (refY / 2));
                 return pos + (Vector2.left * refX / 2) + offset;
             case AnchorPoint.BottomRight:
+                Debug.Log($"Pos: {pos} " +
+                 $"\nDown: {(Vector2.down * (refY / 2))} " +
+                 $"\nOffset: {offset}");
                 pos += (Vector2.down * (refY / 2));
                 return pos + (Vector2.right * refX / 2) + offset;
             case AnchorPoint.Right:

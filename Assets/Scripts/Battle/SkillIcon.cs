@@ -34,7 +34,7 @@ public class SkillIcon : UIComponent
 
 
     //TODO: Fix this...
-   // protected override void OnMouseStay() => TooltipUI.main?.Show(skill);
+    // protected override void OnMouseStay() => TooltipUI.main?.Show(skill);
 
    // protected override void MouseExit() => TooltipUI.main?.Disable();
 

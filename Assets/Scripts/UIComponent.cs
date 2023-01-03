@@ -7,6 +7,7 @@ public class UIComponent : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public virtual void Enable() { 
         gameObject.SetActive(true);
+        SetAnchorPosition();
     }
 
     public virtual void Disable() {

@@ -1,6 +1,5 @@
 using GameManager.Battle;
-using UnityEngine;
 
-public class NextTurnButton : MonoBehaviour{ 
+public class NextTurnButton : UIComponent { 
     public void OnClick() => BattleSystem.NextTurn(); 
 }

@@ -1379,6 +1379,7 @@ GameObject:
   - component: {fileID: 5540752313879670697}
   - component: {fileID: 2779543697377737607}
   - component: {fileID: 6065103708905824205}
+  - component: {fileID: 7551542666740102794}
   m_Layer: 0
   m_Name: Unit004
   m_TagString: Untagged
@@ -1416,7 +1417,7 @@ SortingGroup:
   m_SortingOrder: 5
 --- !u!95 &6927695068122433766
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1433,7 +1434,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!50 &5540752313879670697
 Rigidbody2D:
   serializedVersion: 4
@@ -1473,7 +1474,8 @@ MonoBehaviour:
     delay: 1
   combatant:
     Movement: {fileID: 11400000, guid: 3951e187badf5e64a963df7ba1067279, type: 2}
-    Skills: []
+    Skills:
+    - {fileID: 11400000, guid: b81e3b1a763d88a4b9baa231d1245827, type: 2}
     BaseStats:
       str: 3
       mag: 3
@@ -1542,6 +1544,24 @@ MonoBehaviour:
   targetLock: 0
   nextToTarget: 0
   repathDelay: 500
+--- !u!114 &7551542666740102794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4217081954450336456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fc2065ad3c99de408831df8e3faf0e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Movement:
+    active: 1
+    baseValue: 0.5
+  Attack:
+    active: 1
+    baseValue: 0.5
 --- !u!1 &4400719228241353402
 GameObject:
   m_ObjectHideFlags: 0

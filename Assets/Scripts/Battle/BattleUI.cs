@@ -1,4 +1,5 @@
 using GameManager.Battle;
+using UnityEngine;
 
 public class BattleUI : UIComponent
 {
@@ -8,6 +9,9 @@ public class BattleUI : UIComponent
         Home, Move, Attack, Item
     }
     private InputMaster.BattleActions battleInput;
+    [SerializeField] private UIComponent nextButton;
+    [SerializeField] private GameObject actionButtonsParent;
+    [SerializeField] private UIComponent skillPanel;
 
 
     private void Awake()  {
@@ -22,26 +26,30 @@ public class BattleUI : UIComponent
 
         switch (menu) {
             case BattleUIMenu.Move:
-                BattleEvent.SquareCallEvent += GoBack;
                 var moveSquares = BattleGrid.GetMoveSquares(BattleSystem.GetCurrentUnit());
                 BattleGrid.SetGridState(BattleSquare.BattleSquareState.Selectable, moveSquares);
                 break;
             case BattleUIMenu.Attack:
-
-                return;
+                skillPanel.Enable();
+                break;
             default:
                 if (BattleGrid.awaitingSquareSelection) {
                     BattleGrid.awaitingSquareSelection = false;
                 }
                 BattleGrid.ResetGrid();
+                nextButton.Enable();
+                actionButtonsParent.SetActive(true);
                 return;
         }
 
+        BattleEvent.SquareCallEvent += GoBack;
+        actionButtonsParent.SetActive(false);
     }
 
     private void GoBack() {
         if (menu == BattleUIMenu.Home) return;
         SetMenu(BattleUIMenu.Home);
+        Enable();
         BattleGrid.awaitingSquareSelection = false;
     }
 
