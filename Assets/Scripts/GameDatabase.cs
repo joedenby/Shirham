@@ -4,30 +4,11 @@ using System.Data;
 using System.Collections.Generic;
 using System;
 using System.Linq;
-
 namespace GameDatabase {
 
     public static class RSSchema
     {
         private static readonly string path = "URI=file:rsdatabase.db";
-
-
-        [RuntimeInitializeOnLoadMethod]
-        public static void Initialize() {
-            using (var connection = new SqliteConnection(path)) {
-                connection.Open();
-
-                using (var command = connection.CreateCommand()) {
-                    command.CommandText = "CREATE TABLE IF NOT EXISTS " +
-                        "identity (id INT, forename VARCHAR(45), familyname VARCHAR(45), race VARCHAR(20), bio TEXT, resides VARCHAR(45))";
-                    command.ExecuteNonQuery();
-
-                    Debug.LogWarning("New rsdatabase.db was created.");
-                }
-
-                connection.Close();
-            }
-        }
 
         public static void AddIdentity(Identity identity) {
             using (var connection = new SqliteConnection(path)) {
@@ -61,6 +42,55 @@ namespace GameDatabase {
                             var race = Enum.Parse(typeof(Identity.Race), reader["race"].ToString());
 
                             identities.Add(new Identity(id, reader["forename"].ToString(), reader["familyname"].ToString(), (Identity.Race)race, reader["bio"].ToString(), reader["resides"].ToString()));
+                        }
+
+                        reader.Close();
+                    }
+                }
+            }
+
+            return identities.ToArray();
+        }
+
+        public static void AddRelationship(Relationship relationship) {
+            using (var connection = new SqliteConnection(path))
+            {
+                connection.Open();
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = $"DELETE FROM relationship where relationshipID = '{relationship.relationshipID}';";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = $"INSERT INTO relationship {relationship.Insert}";
+                    command.ExecuteNonQuery();
+                }
+
+                connection.Close();
+            }
+        }
+
+        public static Relationship[] QueryRelationship(string query) {
+            List<Relationship> identities = new List<Relationship>();
+
+            using (var connection = new SqliteConnection(path))
+            {
+                connection.Open();
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = query;
+
+                    using (IDataReader reader = command.ExecuteReader())
+                    {
+
+                        while (reader.Read())
+                        {
+                            int self = int.Parse(reader["selfID"].ToString());
+                            int other = int.Parse(reader["otherID"].ToString());
+                            int score = int.Parse(reader["score"].ToString());
+
+                            identities.Add(new Relationship(reader["relationshipID"].ToString(), self, other, score));
                         }
 
                         reader.Close();
@@ -107,6 +137,30 @@ namespace GameDatabase {
                        $"race: {race} \n" +
                        $"bio: {bio} \n" +
                        $"resides: {resides}";
+            }
+        }
+        public class Relationship { 
+            public readonly string relationshipID;
+            public readonly int selfID;
+            public readonly int otherID;
+            [Range(-10, 10)]
+            public readonly int score;
+            public string Insert => $"(relationshipID, selfID, otherID, score) " +
+            $"VALUES ('{relationshipID}', {selfID}, {otherID}, {score})";
+
+            public Relationship(string relationshipID, int selfID, int otherID, int score) { 
+                this.relationshipID = relationshipID;
+                this.selfID = selfID;
+                this.otherID = otherID;
+                this.score = score;
+            }
+
+            public override string ToString()
+            {
+                return $"ID: {relationshipID} \n" +
+                    $"selfID: {selfID} \n" +
+                    $"otherID: {otherID} \n" +
+                    $"score: {score}";
             }
         }
     }

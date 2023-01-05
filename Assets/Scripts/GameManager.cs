@@ -94,8 +94,6 @@ namespace GameManager
                     return;
                 }
 
-                Debug.Log($"Stopping currently playing audiosources");
-
                 //Stop currently playing music
                 foreach (AudioSource audioSource in PlayingSources(MusicSources))
                 {
@@ -109,8 +107,6 @@ namespace GameManager
                     //Want to stop by fading
                     await FadeSource(audioSource, 0);
                 }
-
-                Debug.Log($"Playing: {track}");
 
                 MusicSources[0].loop = loop;
                 MusicSources[0].clip = track;
