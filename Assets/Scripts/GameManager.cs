@@ -21,15 +21,19 @@ namespace GameManager
          */
         static class Runtime
         {
-            
+            private static GameObject MainCamera { get => Resources.Load<GameObject>("Misc/MainCamera"); }
+            private static GameObject Console { get => Resources.Load<GameObject>("Misc/[CONSOLE]"); }
 
             [RuntimeInitializeOnLoadMethod]
             private static void OnLoad()
             {
-                GameObject camObj = Resources.Load<GameObject>("Misc/MainCamera");
-                GameObject cam = Object.Instantiate(camObj);
-                Object.DontDestroyOnLoad(cam);
-                cam.name = "MainCamera";
+                GameObject obj = Object.Instantiate(MainCamera);
+                Object.DontDestroyOnLoad(obj);
+                obj.name = "MainCamera";
+
+                obj = Object.Instantiate(Console);
+                Object.DontDestroyOnLoad(obj);
+                obj.name = "[CONSOLE]";
             }
 
            
@@ -240,6 +244,7 @@ namespace GameManager
         static class UI
         {
             public static GUIController GUI { private set; get; }
+            public static BattleUI BattleUI { private set; get; }
             public static EventSystem EventSystem { private set; get; }
 
             [RuntimeInitializeOnLoadMethod]
@@ -249,6 +254,12 @@ namespace GameManager
                 var obj = Object.Instantiate(Resources.Load<GameObject>("GUI/GUI"));
                 obj.name = "GUI";
                 GUI = obj.GetComponent<GUIController>();
+                Object.DontDestroyOnLoad(obj);
+
+                //BattleUI
+                obj = Object.Instantiate(Resources.Load<GameObject>("GUI/BattleUI"));
+                obj.name = "BattleUI";
+                BattleUI = obj.GetComponent <BattleUI>();
                 Object.DontDestroyOnLoad(obj);
 
                 //EventSystem
@@ -668,7 +679,7 @@ namespace GameManager
                 CurrentUnit.combatant.MP = CurrentUnit.combatant.MAXMP();
                 if (CurrentUnit.IsEnemy())
                 {
-                    BattleUI.main.Disable();
+                    BattleUI.instance.Disable();
                     EnemyAI enemyAI = CurrentUnit.GetComponent<EnemyAI>();
                     if (!enemyAI) {
                         Debug.LogError("Enemy unit contains no AI behaviour!");
@@ -690,7 +701,7 @@ namespace GameManager
                     //Player turn. Set everything up.
                     Debug.Log($"Player Turn. [{CurrentUnit.name} : {TurnOrder.Count()}]");
                     BattleEvent.InvokePartyMemberChangeEvent();
-                    BattleUI.main.Enable();
+                    BattleUI.instance.Enable();
                 }
 
                 //Set grid back to normal

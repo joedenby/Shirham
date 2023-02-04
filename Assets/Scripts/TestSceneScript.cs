@@ -37,11 +37,6 @@ public class TestSceneScript : MonoBehaviour
                 UnitManager.AssignPartyMemeber(unit);
         }
 
-        RSSchema.AddIdentity(new RSSchema.Identity(002, "Bear", "Asshol", RSSchema.Identity.Race.Elf, "Sucks cock for a living", "EHHHHHH ITALIA EHHHHH"));
-        foreach (RSSchema.Identity i in RSSchema.QueryIdentity("SELECT * FROM identity")) {
-            Debug.Log(i);
-        };
-
         AudioManager.PlayMusic("HumanVillage", true, false);
 
         yield return null;

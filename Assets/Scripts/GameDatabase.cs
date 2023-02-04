@@ -4,8 +4,8 @@ using System.Data;
 using System.Collections.Generic;
 using System;
 using System.Linq;
-namespace GameDatabase {
 
+namespace GameDatabase {
     public static class RSSchema
     {
         private static readonly string path = "URI=file:rsdatabase.db";

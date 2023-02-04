@@ -1,6 +1,5 @@
 using UnityEngine;
 using GameManager.Battle;
-using System.Linq;
 
 [System.Serializable]
 public class IMovement : IModule
@@ -15,6 +14,8 @@ public class IMovement : IModule
     public void SetEnemyUnit(EnemyUnit unit) => this.unit = unit;
 
     public float Confidence() {
+        if (unit.combatant.MP <= 0) return 0;
+
         //Get square EnemyUnit is standing on
         BattleSquare center = BattleGrid.GetSquareViaUnit(unit);
 
@@ -32,7 +33,7 @@ public class IMovement : IModule
             if (!cn.ContainsUnits()) continue;
 
             UnitController u = cn.GetInhabitedUnits()[0];
-            if (!u.IsEnemy()) {
+            if (!u.IsEnemy() && !u.combatant.isDead) {
                 p2++;
             }
         }
@@ -53,7 +54,7 @@ public class IMovement : IModule
                 if (u.IsEnemy()) {
                     e++;
                 }
-                else {
+                else if (!u.combatant.isDead){
                     p++;
                     a += unit.combatant.GetAggroRelative(u.combatant, BattleGrid.Distance(center, n));
                 }
@@ -62,13 +63,13 @@ public class IMovement : IModule
 
             e = (e > 0) ? (e - 1) : 0;
             float c = ((baseValue + (e * 0.1f)) - ((p2 * 0.1f) - (p * 0.1f))) + (a * 0.1f);
-            if (c > confidence) desiredSquare = sq;
+            if (c > confidence) 
+                desiredSquare = sq.ContainsUnits() ? desiredSquare : sq;
 
-            confidence = (c > confidence) ? c : confidence;
+            confidence = (c > confidence && !sq.ContainsUnits()) ? c : confidence;
         }
 
-        Debug.Log($"Chosen {(desiredSquare != null ? desiredSquare.name : "NULL")} with c: {confidence}");
-        return confidence; 
+        return desiredSquare == null ? 0 : confidence; 
     }
 
     public bool IsActive() => active;
@@ -78,7 +79,9 @@ public class IMovement : IModule
     public void PerformAction()
     {
         if(!desiredSquare) return;
+        int cost = BattleGrid.Distance(BattleGrid.GetSquareViaUnit(unit), desiredSquare);
         BattleGrid.UnitToSquare(unit, desiredSquare, true);
+        unit.combatant.MP  -= cost;
     }
 
     

@@ -16,7 +16,7 @@ public class IAttack : IModule
     //other than attack players with single target attacks. Expand on this later.
     public float Confidence()
     {
-        if(baseValue == 0) return 0;
+        if(unit.combatant.MP <= 0 || baseValue == 0) return 0;
 
         BattleSquare center = BattleGrid.GetSquareViaUnit(unit);
         Skill[] unitSkills = unit.combatant.Skills.ToArray();
@@ -29,7 +29,8 @@ public class IAttack : IModule
                 if (!sq.ContainsUnits()) continue;  //Is a unit on this square?
 
                 UnitController targetUnit = sq.GetInhabitedUnits()[0]; 
-                if (targetUnit.IsEnemy()) continue; //Is this unit a party member?
+                if (targetUnit.IsEnemy() || targetUnit.combatant.isDead) 
+                    continue; //Is this unit a party member? Or even alive?!
 
                 Instruction instruction = skill.DamageInstruction();
                 if (instruction.action.evt != Instruction.ActionEvent.Damage) 
@@ -63,7 +64,9 @@ public class IAttack : IModule
             return;
         }
 
+        BattleGrid.Selected = BattleGrid.GetSquareViaUnit(desiredTarget);
         desiredSkill.Cast();
+        unit.combatant.MP -= desiredSkill.cost;
     }
 
     public void SetEnemyUnit(EnemyUnit unit) => this.unit = unit;

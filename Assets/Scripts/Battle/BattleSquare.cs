@@ -1,6 +1,7 @@
 using UnityEngine;
 using GameManager.Battle;
 using System.Collections.Generic;
+using GameManager.Hub;
 
 public class BattleSquare : MonoBehaviour
 {

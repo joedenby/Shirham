@@ -1,14 +1,20 @@
 using GameManager.Battle;
 using UnityEngine.UI;
 using UnityEngine;
+using TMPro;
 
 public class SkillIcon : UIComponent
 {
     [SerializeField] private Skill skill;
+    [SerializeField] private TextMeshProUGUI header;
     [SerializeField] private Image icon;
 
-   
-    public void Set(Skill skill) => this.skill = skill;
+
+    public void Set(Skill skill) { 
+        this.skill = skill;
+        icon.sprite = skill.icon;
+        header.text = skill.name;
+    }
     public override void Enable() => gameObject.SetActive(true);
     public override void Disable() => gameObject.SetActive(false);
     public void Select() {
@@ -20,8 +26,13 @@ public class SkillIcon : UIComponent
         ShowPattern(true);
         BattleEvent.SquareCallEvent += skill.Cast;
         BattleEvent.SquareCallEvent += ClearEvents;
+        BattleGrid.awaitingSquareSelection = true;
+        BattleUI.instance.Disable();
     }
 
+    protected override void MouseEnter() => ShowPattern(skill.HeaderInstruction().singleTarget);
+
+    protected override void MouseExit() => ClearPattern();
     public void ShowPattern(bool validOnly) {
         ClearPattern();
 
@@ -32,11 +43,6 @@ public class SkillIcon : UIComponent
         BattleGrid.SetGridState(BattleSquare.BattleSquareState.Selectable, squares);
     }
 
-
-    //TODO: Fix this...
-    // protected override void OnMouseStay() => TooltipUI.main?.Show(skill);
-
-   // protected override void MouseExit() => TooltipUI.main?.Disable();
 
     public void ClearPattern() {
         if (BattleGrid.awaitingSquareSelection) return;

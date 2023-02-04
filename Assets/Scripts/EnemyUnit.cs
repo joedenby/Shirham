@@ -9,7 +9,7 @@ public class EnemyUnit : UnitController
     public float sightRadius = 3f;
     public float alertRadius = 6f;
     private bool inBattle = false;
-    private bool inRange = false;
+    private bool inRange => Vector2.Distance(UnitManager.Player.transform.position, transform.position) < (sightRadius * 1.5f);
     private Vector2 point;
 
 
@@ -28,7 +28,6 @@ public class EnemyUnit : UnitController
     {
         if (!gameObject.activeSelf) return;
 
-        inRange = Vector2.Distance(UnitManager.Player.transform.position, transform.position) < (sightRadius * 1.5f);
         Animate();
         Pathing();
     }

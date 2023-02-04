@@ -1473,7 +1473,7 @@ MonoBehaviour:
     routePoints: []
     delay: 1
   combatant:
-    Movement: {fileID: 11400000, guid: 3951e187badf5e64a963df7ba1067279, type: 2}
+    Movement: {fileID: 11400000, guid: 229034eaf8f5a5843b0694bfc951bc7b, type: 2}
     Skills:
     - {fileID: 11400000, guid: b81e3b1a763d88a4b9baa231d1245827, type: 2}
     BaseStats:

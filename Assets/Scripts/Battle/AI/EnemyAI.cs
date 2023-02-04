@@ -29,6 +29,7 @@ public class EnemyAI : MonoBehaviour
     }
 
     public void GenerateInitialModuleTable() => ModuleTables = GetModuleTables();
+
     private ModuleTable[] GetModuleTables() {
         ModuleTable[] table = new ModuleTable[] {
             new ModuleTable(Movement.Confidence(), Movement), 

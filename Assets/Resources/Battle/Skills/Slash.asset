@@ -15,6 +15,7 @@ MonoBehaviour:
   singleTarget: 1
   description: A single strike attack dealing STR damage to target. Possible chance
     to stun.
+  cost: 5
   pattern:
     sequence:
     - {x: 1, y: 0}

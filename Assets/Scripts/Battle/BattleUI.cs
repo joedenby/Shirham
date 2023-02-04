@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class BattleUI : UIComponent
 {
-    public static BattleUI main { get; private set; }
+    public static BattleUI instance { get; private set; }
     public static BattleUIMenu menu { get; private set; }
     public enum BattleUIMenu { 
         Home, Move, Attack, Item
@@ -11,11 +11,11 @@ public class BattleUI : UIComponent
     private InputMaster.BattleActions battleInput;
     [SerializeField] private UIComponent nextButton;
     [SerializeField] private GameObject actionButtonsParent;
-    [SerializeField] private UIComponent skillPanel;
+    [SerializeField] private SkillPanel skillPanel;
 
 
     private void Awake()  {
-        main = this;
+        instance = this;
         battleInput = GameManager.InputManager.BattleInput();
         battleInput.Back.performed += ev => GoBack();
         Disable();
@@ -23,6 +23,7 @@ public class BattleUI : UIComponent
 
     public void SetMenu(BattleUIMenu panelMenu) {
         menu = panelMenu;
+        skillPanel.Disable();
 
         switch (menu) {
             case BattleUIMenu.Move:

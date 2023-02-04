@@ -7,6 +7,7 @@ public class Skill : ScriptableObject
 {
     [SerializeField] private bool singleTarget;
     [TextArea(3, 5)] public string description;
+    [Min(0)]public int cost = 1;
     public Pattern pattern;
     public Sprite icon;
     public string anim;
