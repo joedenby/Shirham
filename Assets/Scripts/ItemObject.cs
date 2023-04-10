@@ -22,7 +22,6 @@ public class ItemObject : Interactable
     {
         _zCoordinate = _mainCamera.WorldToScreenPoint(gameObject.transform.position).z;
         _offset = gameObject.transform.position - GetMouseWorldPosition();
-        showPrompt = false;
         SetToTopLayer(true);
     }
 
@@ -40,7 +39,6 @@ public class ItemObject : Interactable
 
     private void OnMouseUp()
     {
-        showPrompt = true;
         transform.position = GameManager.Hub.Navigation.CenterSquare(transform.position);
         SetToTopLayer(false);
     }
