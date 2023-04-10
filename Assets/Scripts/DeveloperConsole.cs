@@ -5,6 +5,7 @@ using System;
 using Object = UnityEngine.Object;
 using System.IO;
 using System.Linq;
+using GameManager.Battle;
 
 public class DeveloperConsole : MonoBehaviour
 {
@@ -193,8 +194,8 @@ public class Cam : Command
                     return;
                 }
                 var size = new Vector2Int(int.Parse(args[1]), int.Parse(args[2]));
-                CameraController.main.Camera.refResolutionX = size.x;
-                CameraController.main.Camera.refResolutionY = size.y;
+                CameraController.main.PPCamera.refResolutionX = size.x;
+                CameraController.main.PPCamera.refResolutionY = size.y;
                 return;
             case "target":
                 if (args.Length != 2) {
@@ -315,6 +316,55 @@ public class Unit : Command
                 return;
             default:
                 Debug.Log("Unknown command: " + args[0]);
+                return;
+        }
+    }
+}
+
+public class Grid : Command
+{
+    public override void Execute(string[] args)
+    {
+
+        switch (args[0]) {
+            case "paint":
+                if (args.Length < 4)
+                {
+                    Debug.Log($"Usage: paint 'element' x y" +
+                    $"\nargs[{args.Length}]");
+                    return;
+                }
+                else if (!BattleGrid.HasGrid()) {
+                    Debug.Log("No BattleGrid is currently present.");
+                    return;
+                }
+
+                Vector2 coordinate = Vector2.zero;
+                try {
+                    coordinate = new Vector2(int.Parse(args[2]), int.Parse(args[3]));
+                } catch(Exception e)
+                {
+                    Debug.LogError($"Could not parse args x[{args[2]}] y[{args[3]}] \n{e.Message}");
+                    return;
+                }
+
+                BattleSquare selected = BattleGrid.GetSquareAtCoordinate(coordinate);
+                if (selected == null) {
+                    Debug.Log($"Did not find square at coordinate {coordinate}");
+                    return;
+                }
+
+                if (Elemental.TryParse(args[1], out Elemental x))
+                {
+                    selected.SetActiveElement(x.elementalType);
+                    Debug.Log($"Set square at {coordinate} to {x.elementalType}");
+                } else
+                    Debug.LogError($"No element called {args[1]} exists.");
+
+                if (args.Length == 4) return;
+
+
+
                 return;
         }
     }

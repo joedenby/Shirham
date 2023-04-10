@@ -7,6 +7,7 @@ using System.Linq;
 using System;
 using Object = UnityEngine.Object;
 using System.Xml;
+using UnityEngine.UIElements;
 
 namespace GameManager
 {
@@ -351,14 +352,18 @@ namespace GameManager
                 if (!player) return;
                 if (Vector2.Distance(player.transform.position, location) < 0.5f) return;
 
-                int x = Mathf.FloorToInt(location.x);
-                int y = Mathf.FloorToInt(location.y);
-                Vector2 newLoc = new Vector2((x + 0.5f), (y + 0.5f));
+                Vector2 newLoc = CenterSquare(location);
 
                 if (pointObj) Object.Destroy(pointObj);
                 pointObj = Object.Instantiate(Resources.Load<GameObject>("Misc/MovePoint"));
                 pointObj.transform.position = newLoc;
                 player.pathFinder.GoTo(pointObj.transform);
+            }
+
+            public static Vector2 CenterSquare(Vector2 location) {
+                int x = Mathf.FloorToInt(location.x);
+                int y = Mathf.FloorToInt(location.y);
+                return new Vector2((x + 0.5f), (y + 0.5f));
             }
 
             private static void MovePlayer(bool active) {

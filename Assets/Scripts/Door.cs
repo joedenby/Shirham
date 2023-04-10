@@ -21,6 +21,7 @@ public class Door : Interactable
     {
         var unit = collision.GetComponent<UnitController>();
         if (!unit) return;
+
         //TODO: Display transition UI here
         if (!SpriteRenderer || locked) return;
         SpriteRenderer.sprite = openSprite;

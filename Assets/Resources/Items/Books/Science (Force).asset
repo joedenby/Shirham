@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6721dd9807b92404c9ead8a9528e4e35, type: 3}
   m_Name: Science (Force)
   m_EditorClassIdentifier: 
+  icon: {fileID: -3154850044925739375, guid: da88e1b2d1e6dc448bde9d22201c4ebc, type: 3}
   name: 'Science Book: Force'
   description: Part of a series of books that describe the natural wonder of sience.
   weight: 0.5

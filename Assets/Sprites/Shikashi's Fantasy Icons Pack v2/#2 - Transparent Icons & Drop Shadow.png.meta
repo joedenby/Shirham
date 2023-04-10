@@ -855,7 +855,7 @@ TextureImporter:
       213: 8966060540651279181
     second: '#2 - Transparent Icons & Drop Shadow_283'
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -896,7 +896,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 32
@@ -915,6 +915,7 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -942,6 +943,30 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -7009,8 +7034,8 @@ TextureImporter:
       '#2 - Transparent Icons & Drop Shadow_192': -4012141969497314876
       '#2 - Transparent Icons & Drop Shadow_215': -5526351751305055198
       '#2 - Transparent Icons & Drop Shadow_29': 5942704498625079392
-      '#2 - Transparent Icons & Drop Shadow_145': 8099792054545138375
       '#2 - Transparent Icons & Drop Shadow_155': 7311480069754638794
+      '#2 - Transparent Icons & Drop Shadow_145': 8099792054545138375
       '#2 - Transparent Icons & Drop Shadow_14': 6602636038343897003
       '#2 - Transparent Icons & Drop Shadow_71': 4240453425555717549
       '#2 - Transparent Icons & Drop Shadow_170': -3611524022231650080
@@ -7078,11 +7103,11 @@ TextureImporter:
       '#2 - Transparent Icons & Drop Shadow_17': -1245755177353750832
       '#2 - Transparent Icons & Drop Shadow_38': 3378112070155288112
       '#2 - Transparent Icons & Drop Shadow_25': 3435686699319217275
-      '#2 - Transparent Icons & Drop Shadow_229': 6142543257898026600
       '#2 - Transparent Icons & Drop Shadow_268': 715997935203308138
       '#2 - Transparent Icons & Drop Shadow_53': 2105162914696504809
       '#2 - Transparent Icons & Drop Shadow_69': 249412086356771944
       '#2 - Transparent Icons & Drop Shadow_131': 9177197982001231785
+      '#2 - Transparent Icons & Drop Shadow_229': 6142543257898026600
       '#2 - Transparent Icons & Drop Shadow_278': 6145633931487486579
       '#2 - Transparent Icons & Drop Shadow_130': 7356012238514178944
       '#2 - Transparent Icons & Drop Shadow_80': -6312372248548970523

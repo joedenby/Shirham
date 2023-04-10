@@ -8,8 +8,8 @@ public struct GUIAnchor
     public enum AnchorPoint { 
         None, Center, Top, Bottom, Left, Right, BottomLeft, BottomRight, TopLeft, TopRight
     }
-    private int refX => CameraController.main.Camera.refResolutionX / 32;
-    private int refY => CameraController.main.Camera.refResolutionY / 32;
+    private int refX => CameraController.main.PPCamera.refResolutionX / 32;
+    private int refY => CameraController.main.PPCamera.refResolutionY / 32;
 
     public Vector2 WorldPosition() {
         Vector2 pos = (Vector2)CameraController.main.transform.position;

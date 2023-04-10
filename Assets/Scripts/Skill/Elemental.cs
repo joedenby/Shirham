@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 [System.Serializable]
 public class Elemental
@@ -126,6 +127,17 @@ public class Elemental
         }
 
         return selected.ToArray();
+    }
+    public static bool TryParse(string query, out Elemental elemental) {
+        string[] stringSplit = query.Split(" ");
+        if (Enum.TryParse(typeof(ElementalType), stringSplit[0], true, out object x)) {
+            int value = stringSplit.Length > 1 ? (int.TryParse(stringSplit[1], out int v) ? v : 0) : 0;
+            elemental = new Elemental((ElementalType)x, value);
+            return true;
+        }
+
+        elemental = null;
+        return false;
     }
     public static bool Contains(ElementalType elementalType, Elemental[] set) {
         foreach (Elemental e in set) { 

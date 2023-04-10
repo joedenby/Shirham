@@ -2,6 +2,7 @@ using UnityEngine;
 using GameManager.Battle;
 using System.Collections.Generic;
 using GameManager.Hub;
+using System.Linq;
 
 public class BattleSquare : MonoBehaviour
 {
@@ -106,12 +107,15 @@ public class BattleSquare : MonoBehaviour
 
         baseAnimator.SetTrigger("Reset");
 
-        BattleSquare[] neighbours = BattleGrid.Radial(this);
+        var neighbours = BattleGrid.Radial(this).ToList().OrderBy(x => Random.value).ToList();
+        int spread = Random.Range(3, 5);
         foreach (BattleSquare n in neighbours) {
+            if (spread <= 0) return;
             ElementalType combine = Elemental.Combine(n.activeElement, element);
             if (combine == n.activeElement) continue;
 
             n.SetActiveElement(combine);
+            spread--;
         }
     }
 

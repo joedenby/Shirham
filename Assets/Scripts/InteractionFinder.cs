@@ -17,7 +17,7 @@ public class InteractionFinder : MonoBehaviour
     {
         Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         pos = new Vector2(Mathf.Floor(pos.x) + 0.5f, Mathf.Floor(pos.y) + 0.5f);
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(pos, 0.5f);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(pos, 0.33f);
         if (colliders.Length == 0) return;
 
         Interactable interactable = null;

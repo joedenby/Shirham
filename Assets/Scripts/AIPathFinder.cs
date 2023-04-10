@@ -11,20 +11,19 @@ public class AIPathFinder : MonoBehaviour
     public bool hasPath => (path == null || path.Count > 0);
     public int pathLength => (path == null) ? 0 : path.Count;
     public bool nextToTarget = false;
-    [Range(0, 2000)]
-    public int repathDelay = 500;
 
-    private Heap<AIPathNode> Open;
-    private List<AIPathNode> Closed = new List<AIPathNode>();
-    private Queue<Vector2> path;
+    public Heap<AIPathNode> Open;
+    public List<AIPathNode> Closed = new List<AIPathNode>();
+    public Queue<Vector2> path;
 
     private Transform targetTransform;
 
+
     private async void Start()
     {
-        await Task.Delay(repathDelay);
         GoTo(target);
     }
+
     public void GoTo(Transform target, bool follow = false) {
         targetTransform = target;
         targetLock = false;
@@ -54,7 +53,6 @@ public class AIPathFinder : MonoBehaviour
 
     private void FindPath() {
         if (!AIPathGrid.main || !AIPathGrid.main.hasGrid) return;
-
         AIPathNode start = AIPathGrid.main.NodeFromWorldPoint(transform.position);
         AIPathNode end = nextToTarget ? AIPathGrid.main.RelativeNeighbourFromWorldPoint(transform.position, GetTarget()) :
             AIPathGrid.main.NodeFromWorldPoint(GetTarget());
@@ -70,9 +68,11 @@ public class AIPathFinder : MonoBehaviour
         start.gCost = 0;
         start.hCost = GetDistance(start, end);
 
-        while (Open.Count > 0) {
+        while (Open.Count > 0)
+        {
             AIPathNode current = Open.RemoveFirst();
-            if (current == end) {
+            if (current == end)
+            {
                 BuildPath(current);
                 return;
             }
@@ -84,12 +84,14 @@ public class AIPathFinder : MonoBehaviour
                 if (!neighbour.walkable || Closed.Contains(neighbour)) continue;
 
                 int gCost = neighbour.gCost + GetDistance(current, neighbour);
-                if (gCost < neighbour.gCost) {
+                if (gCost < neighbour.gCost)
+                {
                     neighbour.parent = current;
                     neighbour.gCost = gCost;
                     neighbour.hCost = GetDistance(neighbour, end);
 
-                    if (!Open.Contains(neighbour)) {
+                    if (!Open.Contains(neighbour))
+                    {
                         Open.Add(neighbour);
                     }
 
@@ -123,13 +125,6 @@ public class AIPathFinder : MonoBehaviour
         if (dstX > dstY)
             return 14 * dstY + 10 * (dstX - dstY);
         return 14 * dstX + 10 * (dstY - dstX);
-    }
-
-    private async void StickToTarget() {
-        while (target != null) {
-            FindPath();
-            await Task.Delay(repathDelay);
-        }
     }
 
 }

@@ -4,7 +4,8 @@ using UnityEngine.Experimental.Rendering.Universal;
 
 public class CameraController : MonoBehaviour
 {
-    public PixelPerfectCamera Camera => GetComponent<PixelPerfectCamera>();
+    public PixelPerfectCamera PPCamera => GetComponent<PixelPerfectCamera>();
+    public Camera Camera => GetComponent<Camera>();
     public static CameraController main { get; private set; }
     private void Awake() => main = this;
 
@@ -34,13 +35,13 @@ public class CameraController : MonoBehaviour
     public void ZoomCamera(bool zoom) {
         cameraZoom = zoom;
         if (cameraZoom) {
-            Camera.refResolutionX = 320;
-            Camera.refResolutionY = 180;
+            PPCamera.refResolutionX = 320;
+            PPCamera.refResolutionY = 180;
             return;
         }
 
-        Camera.refResolutionX = 640;
-        Camera.refResolutionY = 360;
+        PPCamera.refResolutionX = 640;
+        PPCamera.refResolutionY = 360;
     }
 
     public void CenterBounds(IEnumerable<Component> objects) {

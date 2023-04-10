@@ -4,26 +4,31 @@ using GameManager.Units;
 
 public class Interactable : MonoBehaviour
 {
-    [SerializeField]protected Sprite actionIcon;
-    [SerializeField]protected string promptText;
+    [SerializeField] protected Sprite actionIcon;
+    [SerializeField] protected string promptText;
+    [SerializeField] protected bool showPrompt = true;
+    [SerializeField] protected bool approach = true;
     protected GameObject promptObj;
+
 
 
     protected void Prompt(bool active) {
         if(promptObj) Destroy(promptObj);
-        if (!active) return;
+        if (!active || !showPrompt) return;
 
         promptObj = Instantiate(Resources.Load<GameObject>("Misc/Prompt"));
         var prompt = promptObj.GetComponent<InteractionPrompt>();
         prompt.ShowPrompt(actionIcon, promptText, transform); 
     }
 
-    public void MouseEnter() => Prompt(true);
+    public virtual void MouseEnter() => Prompt(true);
 
-    public void MouseExit() => Prompt(false);
+    public virtual void MouseExit() => Prompt(false);
 
-    public void MouseDown() {
+    public virtual void MouseDown() {
         Navigation.DestoyWayPoint();
+        if (!approach) return;
+
         UnitManager.Player.pathFinder.GoTo(NeighbouringPosition());
     } 
 
