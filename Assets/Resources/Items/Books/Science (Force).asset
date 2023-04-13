@@ -17,6 +17,7 @@ MonoBehaviour:
   description: Part of a series of books that describe the natural wonder of sience.
   weight: 0.5
   price: 5
+  rarity: 3
   title: Force
   firstEdition: 0
   text: "It has been long apparent to the old ones that rules govern the universe.
