@@ -62,6 +62,15 @@ public class Inventory : MonoBehaviour
         //TODO: Drop Item on floor
 
     }
+
+    public bool ItemAtSlot(int index) => items[index] is not null;
+
+    public void MoveItem(int a, int b) {
+        var itemA = items[a];
+        items[a] = items[b];
+        items[b] = itemA;
+    }
+
     public bool HasFreeSlot(out int index) {
         index = -1;
         for (int i = 0; i < items.Length; i++) {
