@@ -1,14 +1,15 @@
-using Pathfinding.Ionic.Zlib;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class DragonEyesMinigame : MonoBehaviour , IMinigame
 {
-    private int[] playerWallet = new int[5]; 
+    private int[] playerTokens = new int[5]; 
     private int potAmount;
+    public Wallet playerCash = new Wallet (5 ,5 ,5);
+    public Wallet bet = new Wallet(0,0,0);
     
     public MinigameState State => UpdateState();
+    public UnityEvent UIUpdate = new UnityEvent(); 
 
     public void EndGame()
     {
@@ -17,11 +18,14 @@ public class DragonEyesMinigame : MonoBehaviour , IMinigame
 
     public void StartGame()
     {
-        for (int i = 0; i < playerWallet.Length; i++)
+        for (int i = 0; i < playerTokens.Length; i++)
         {
-            playerWallet[i] = 2;
+            playerTokens[i] = 2;
         }
         potAmount = 0;
+        bet = new(0,0,0);
+        playerCash = new Wallet(5, 5, 5);
+        UIUpdate.Invoke();
     }
 
     private MinigameState UpdateState()
@@ -29,13 +33,5 @@ public class DragonEyesMinigame : MonoBehaviour , IMinigame
         return MinigameState.Inactive;
     }
 
-    [ContextMenu("test")]
-    public void test()
-    {
-        Wallet w1 = new Wallet(5, 50, 0); //55000
-        Wallet w2 = new Wallet(0, 75, 0); //7500
-
-        Debug.Log($"w1: {w1} - w2: {w2} = {w1 - w2}");
-
-    }
+    
 }
