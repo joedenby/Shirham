@@ -1,4 +1,5 @@
 using UnityEngine;
+using GameManager.Hub;
 
 public class ItemObject : Interactable
 {
@@ -10,35 +11,43 @@ public class ItemObject : Interactable
 
     private Vector3 _offset;
     private float _zCoordinate;
-    private Camera _mainCamera;
+    private Camera _mainCamera => CameraController.main.Camera;
 
 
 
     private void Start() {
-        SetUp();
+        SetPulse(true);
     }
 
     private void OnDisable() {
         LeanTween.cancel(gameObject);
     }
 
-    [ContextMenu("SetUp")]
-    private void SetUp() {
+    private void OnValidate() {
+        name = $"[Item] {(item ? item.name : "<empty>")}";
+        spriteRenderer.sprite = item ? item.icon : null;
+    }
+
+    public static ItemObject Instantiate(Item item, Vector2 position = new Vector2()) {
         if (!item) {
-            Debug.LogWarning("No item has been assigned. ItemObject will be disabled");
-            return;
+            Debug.LogError("Tried to instantiate null item");
+            return null;
         }
 
-        name = $"[Item] {item.name}";
-        spriteRenderer.sprite = item ? item.icon : null;
-        _mainCamera = CameraController.main.Camera;
-        SetPulse(true);
+        var prefab = Resources.Load<GameObject>("Items/[Item]Obj");
+        var instance = Instantiate(prefab, position, Quaternion.identity);
+        var itemObject = instance.GetComponent<ItemObject>();
+        itemObject.name = $"[Item] {(item ? item.name : "<empty>")}";
+        itemObject.spriteRenderer.sprite = item ? item.icon : null;
+        itemObject.item = item;
+        return itemObject;
     }
 
     private void UpdatePulse(float value) =>
         outline?.SetOutline(Item.RarityAsColor(item.rarity), value);
 
     private void SetPulse(bool active) {
+       
         if (!active) { 
             LeanTween.cancel(gameObject);
             UpdatePulse(1);
@@ -74,7 +83,7 @@ public class ItemObject : Interactable
         SetPulse(true);
     }
 
-    private void SetToTopLayer(bool active)
+    public void SetToTopLayer(bool active)
     {
         spriteRenderer.sortingLayerName = active ? "Highest" : "Medium";
         spriteRenderer.sortingOrder = active ? 11 : 0;

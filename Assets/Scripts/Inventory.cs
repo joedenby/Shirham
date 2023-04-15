@@ -63,6 +63,11 @@ public class Inventory : MonoBehaviour
 
     }
 
+    public void RemoveItem(int index) {
+        items[index] = null;
+        onInventoryUpdate.Invoke();
+    }
+
     public bool ItemAtSlot(int index) => items[index] is not null;
 
     public void MoveItem(int a, int b) {
