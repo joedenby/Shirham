@@ -20,7 +20,7 @@ public class MinigameBetBox : MonoBehaviour
         int betValue = (index == 0) ? minigame.bet.Gold : (index == 1) ? minigame.bet.Silver : minigame.bet.Copper;
         int total = betValue + mod;
 
-        if (total > value || total < 0) return;
+        if ((total - 1) > value || total < 0) return;
         var bet = minigame.bet;
         if (index == 0)
         {
@@ -36,6 +36,7 @@ public class MinigameBetBox : MonoBehaviour
         }
 
         valueText.text = $"{betValue}{suffix}";
+        dragonEyes.UpdateBetWindow();
     }
 
 }

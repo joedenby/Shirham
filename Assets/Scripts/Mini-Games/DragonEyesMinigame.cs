@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 public class DragonEyesMinigame : MonoBehaviour , IMinigame
 {
@@ -9,7 +8,8 @@ public class DragonEyesMinigame : MonoBehaviour , IMinigame
     public Wallet bet = new Wallet(0,0,0);
     
     public MinigameState State => UpdateState();
-    public UnityEvent UIUpdate = new UnityEvent(); 
+    public DragonEyesGUI gui;
+
 
     public void EndGame()
     {
@@ -25,7 +25,7 @@ public class DragonEyesMinigame : MonoBehaviour , IMinigame
         potAmount = 0;
         bet = new(0,0,0);
         playerCash = new Wallet(5, 5, 5);
-        UIUpdate.Invoke();
+        gui.UpdateGUI();
     }
 
     private MinigameState UpdateState()
