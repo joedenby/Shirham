@@ -371,13 +371,8 @@ namespace GameManager
                 Units.UnitManager.Player.movementOverride = active;
             }
 
-            /**
-             * Returns true if given postion (Vector2) in inhabited by
-             * an obstacle.
-             * 
-             * @param Vector2
-             * @return bool
-             */
+      
+            //Returns true if given postion (Vector2) in inhabited by an obstacle.
             public static bool ObstacleAtLocation(Vector2 postion)
             {
                 //Check a collider is in the area
@@ -388,13 +383,20 @@ namespace GameManager
                 return coll.gameObject.layer == 3;
             }
 
+            //Returns true if collider exists at given postion (Vector2).
             public static Collider2D ColliderAtLocation(Vector2 position) {
                 Vector2 x = position - ((Vector2.left + Vector2.up) / 4);
                 Vector2 y = position - ((Vector2.right + Vector2.down) / 4);
                 Collider2D coll = Physics2D.OverlapArea(x, y);
 
-                //Debug.Log($"Snap: {position} | Coll: {(coll != null ? coll.name : "<Empty>")} \nx: {x} \ny: {y}");
                 return coll;
+            }
+
+            //Returns false if collider exists at given postion (Vector2) and collider is tagged "NotItemSafe".
+            public static bool ItemSafeLocation(Vector2 position) { 
+                var coll = ColliderAtLocation(position);
+
+                return coll == null || !coll.CompareTag("NotItemSafe");
             }
 
             /**

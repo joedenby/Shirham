@@ -1,6 +1,12 @@
 using UnityEngine;
 using GameManager.Hub;
 
+/**
+ * ==================================== ItemObject.cs ====================================
+ * The ItemObject class represents an interactable item in the game world, which can be picked up and 
+ * added to the player's inventory. This class inherits from the Interactable base class and manages 
+ * the item's display, interactions, and instantiation.
+ */
 public class ItemObject : Interactable
 {
     public Item item;
@@ -9,27 +15,31 @@ public class ItemObject : Interactable
     [SerializeField]
     private OutlineController outline;
 
+    // Private fields for handling item's dragging and positioning
     private Vector3 _offset;
     private float _zCoordinate;
     private Camera _mainCamera => CameraController.main.Camera;
 
 
-
-    private void Start() {
+    // Set pulse effect active when the object is created in the game world
+    private void Start() => 
         SetPulse(true);
-    }
 
-    private void OnDisable() {
+    // Cancel ongoing animations using LeanTween library when the object is disabled
+    private void OnDisable() =>
         LeanTween.cancel(gameObject);
-    }
+ 
 
+    // Update the item's name and sprite in the Unity Editor when the script is loaded or a value is changed
     private void OnValidate() {
         name = $"[Item] {(item ? item.name : "<empty>")}";
         spriteRenderer.sprite = item ? item.icon : null;
     }
 
-    public static ItemObject Instantiate(Item item, Vector2 position = new Vector2()) {
-        if (!item) {
+    // Create and return a new ItemObject instance with the specified Item and position in the game world
+    public static ItemObject Instantiate(Item item, Vector2 position = new Vector2())  {
+        if (!item)
+        {
             Debug.LogError("Tried to instantiate null item");
             return null;
         }
@@ -43,12 +53,15 @@ public class ItemObject : Interactable
         return itemObject;
     }
 
+    // Update the item's outline pulse effect
     private void UpdatePulse(float value) =>
         outline?.SetOutline(Item.RarityAsColor(item.rarity), value);
 
-    private void SetPulse(bool active) {
-       
-        if (!active) { 
+    // Activate or deactivate the item's pulse effect using LeanTween library
+    private void SetPulse(bool active)  {
+
+        if (!active)
+        {
             LeanTween.cancel(gameObject);
             UpdatePulse(1);
             return;
@@ -60,31 +73,41 @@ public class ItemObject : Interactable
             .setLoopPingPong();
     }
 
-    private void OnMouseDown() {
+    // Update private fields and item's layer when the mouse button is pressed down
+    private void OnMouseDown()  {
         _zCoordinate = _mainCamera.WorldToScreenPoint(gameObject.transform.position).z;
         _offset = gameObject.transform.position - GetMouseWorldPosition();
         SetToTopLayer(true);
         SetPulse(false);
     }
 
-    private void OnMouseDrag() {
+    // Update the item's position as the mouse drags
+    private void OnMouseDrag() =>
         transform.position = new Vector3(GetMouseWorldPosition().x + _offset.x, GetMouseWorldPosition().y + _offset.y, transform.position.z);
-    }
+    
 
-    private Vector3 GetMouseWorldPosition() {
+    // Convert mouse position from screen to world coordinates
+    private Vector3 GetMouseWorldPosition()  {
         Vector3 mousePoint = Input.mousePosition;
         mousePoint.z = _zCoordinate;
         return _mainCamera.ScreenToWorldPoint(mousePoint);
     }
 
-    private void OnMouseUp() {
-        transform.position = GameManager.Hub.Navigation.CenterSquare(transform.position);
+    // Snap the item's position to the grid, reset its layer, and activate pulse effect when the mouse button is released
+    private void OnMouseUp()  {
         SetToTopLayer(false);
         SetPulse(true);
+        SetPosition(transform.position);
     }
 
-    public void SetToTopLayer(bool active)
-    {
+    public void SetPosition(Vector2 location) {
+        LeanTween.cancel(gameObject);
+        LeanTween.move(gameObject, GameManager.Hub.Navigation.CenterSquare(location), 0.33f).setEaseOutBounce();
+    }
+
+    // Set the item's sorting layer and order based on the "active" parameter.
+    // Change the item's transparency when it's being dragged (active = true).
+    public void SetToTopLayer(bool active)   {
         spriteRenderer.sortingLayerName = active ? "Highest" : "Medium";
         spriteRenderer.sortingOrder = active ? 11 : 0;
         spriteRenderer.color = new Color(1, 1, 1, active ? 0.5f : 1);
