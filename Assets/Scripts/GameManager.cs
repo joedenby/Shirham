@@ -8,6 +8,8 @@ using System;
 using Object = UnityEngine.Object;
 using System.Xml;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem.UI;
 
 namespace GameManager
 {
@@ -264,10 +266,17 @@ namespace GameManager
                 Object.DontDestroyOnLoad(obj);
 
                 //EventSystem
-                obj = new GameObject("EventSystem");
-                EventSystem = obj.AddComponent<EventSystem>();
-                obj.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
-                Object.DontDestroyOnLoad(obj);
+                SceneManager.sceneLoaded += OnSceneLoaded;
+            }
+
+            private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+            {
+                if (Object.FindObjectOfType<EventSystem>() == null)
+                {
+                    GameObject eventSystem = new GameObject("EventSystem");
+                    EventSystem = eventSystem.AddComponent<EventSystem>();
+                    eventSystem.AddComponent<InputSystemUIInputModule>();
+                }
             }
         }
 
