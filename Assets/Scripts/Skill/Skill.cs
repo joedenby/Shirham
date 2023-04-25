@@ -50,7 +50,7 @@ public class Skill : ScriptableObject
             return new Stats();
         }
             
-        return BattleSystem.GetCurrentUnit().combatant.FinalStats();
+        return BattleSystem.GetCurrentUnit().combatant.combatantStats;
     }
 
 }

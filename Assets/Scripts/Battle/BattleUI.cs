@@ -16,7 +16,7 @@ public class BattleUI : UIComponent
 
     private void Awake()  {
         instance = this;
-        battleInput = GameManager.InputManager.BattleInput();
+        battleInput = GameManager.InputManager.BattleInput;
         battleInput.Back.performed += ev => GoBack();
         Disable();
     }
@@ -74,7 +74,7 @@ public class BattleUI : UIComponent
         if (current == null) return;
 
         SetMenu(BattleUIMenu.Move);
-        current.Movement.GetMovementSpace();
+        current.movement.GetMovementSpace();
         BattleGrid.awaitingSquareSelection = true;
     }
 

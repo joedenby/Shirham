@@ -25,7 +25,6 @@ public class TestSceneScript : MonoBehaviour
 
         var obj =  UnitManager.Instantiate(player);
         UnitManager.SetPlayer(obj.gameObject);
-        InputManager.PlayerInput().Move.Enable();
 
         if (addParty) {
             UnitController[] party = new UnitController[] {

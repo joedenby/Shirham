@@ -10,18 +10,20 @@ public class UnitController : MonoBehaviour
     public AIPathFinder pathFinder => GetComponent<AIPathFinder>();
     public UnitRoute unitRoute = new ();
     public Combatant combatant;
+    public EquipmentManager equipment;
     private new Rigidbody2D rigidbody2D;
-    
-    public float moveSpeed => 4 - combatant.FinalStats().EndAsPercent();
+
+    public float moveSpeed => 4 - combatant.combatantStats.EndAsPercent;
     public bool isMoving => desiredLocation != (Vector2)transform.position;
-    [SerializeField] private Vector2 desiredLocation;
+
+    [SerializeField] 
+    private Vector2 desiredLocation;
     public bool movementOverride;
 
 
 
     protected virtual void Start() {
         Initialize();
-        SetMaxHP();
     }
 
     private void FixedUpdate() {
@@ -45,7 +47,7 @@ public class UnitController : MonoBehaviour
 
     public Vector2 NextVectorMoveOverride() { 
         if (isMoving) return desiredLocation;
-        var direction = GameManager.InputManager.PlayerInput().Move.ReadValue<Vector2>();
+        var direction = GameManager.InputManager.PlayerInput.Move.ReadValue<Vector2>();
         if (Mathf.Abs(direction.x) == Mathf.Abs(direction.y)) {
             var x = (direction.x > 0 ? 1f : -1f);
             var y = (direction.y > 0 ? 1 : -1f);
@@ -128,11 +130,6 @@ public class UnitController : MonoBehaviour
         int flip = (int)((Vector2)transform.position - desiredLocation).normalized.x;
         if (flip == 0) return;
         transform.localScale = new Vector2(flip, 1);
-    }
-
-    [ContextMenu("SetMaxHp")]
-    private void SetMaxHP() {
-        combatant.HP = combatant.MaxHP();
     }
     
 }

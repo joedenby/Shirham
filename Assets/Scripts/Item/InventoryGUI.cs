@@ -1,5 +1,7 @@
+using GameManager;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Linq;
 
 /**
@@ -17,25 +19,44 @@ public class InventoryGUI : MonoBehaviour
     [SerializeField] private GameObject window;
     [SerializeField] private ItemIcon[] icons;
 
-    // Declare public static field to store the currently held object
-    public static ItemObject heldObject;
-
     // Create properties for the selected icon and the active window
     public int selectedIcon { get; private set; }
     private bool isDraggingIcon => icons.Any(x => x.isBeingDragged);
     public static InventoryGUI activeWindow { get; private set; }
+    private bool isActiveWindow => activeWindow && activeWindow.Equals(this);
+    public static bool show => Inventory.heldObject || InputManager.PlayerInput.HUD.IsPressed();
 
+
+
+    private void Awake()   {
+        if (inventory) return;
+
+        inventory = GetComponentInParent<Inventory>();
+        if (!inventory) {
+            Debug.LogWarning($"Could not find inventroy for {name}");
+            return;
+        }
+
+        inventory.onInventoryUpdate.AddListener(UpdateInventory);
+        UpdateInventory();
+    }
 
     // Update method runs once per frame
     private void Update()  {
+        bubble.SetActive(show && !HasPermission(Inventory.InventoryRights.Disabled));
+        transform.localScale = new Vector2(inventory.transform.localScale.x > 0 ? 1 : -1, 1);
+
         // Return if there is no active window or if it doesn't match the current instance
         if (!activeWindow || !activeWindow.Equals(this)) return;
 
         // Set the item if the left mouse button is released and an icon is selected
-        if (Input.GetMouseButtonUp(0) && selectedIcon >= 0)
-        {
+        if (Input.GetMouseButtonUp(0) && selectedIcon >= 0) {
             SetItem(selectedIcon);
         }
+    }
+
+    private bool HasPermission(Inventory.InventoryRights inventoryRight) {
+        return inventory?.permissions == inventoryRight;
     }
 
     // Show or hide the inventory
@@ -43,12 +64,14 @@ public class InventoryGUI : MonoBehaviour
         // Set active window based on current pointer location
         activeWindow = active ? this : null;
 
-        // Inventory stay open on drag check
-        if (!active && isDraggingIcon) return;
+        // Inventory stay closed if no permission
+        if (active && HasPermission(Inventory.InventoryRights.Disabled)) return;
+
+        // Inventory stay open on held item check
+        if (!active && Inventory.heldObject) return;
 
         // Show or hide the inventory window and bubble
         window.SetActive(active);
-        bubble.SetActive(!active);
 
         // Reset the selected icon
         selectedIcon = -1;
@@ -56,22 +79,24 @@ public class InventoryGUI : MonoBehaviour
         // Update the inventory if it is active
         if (!active) return;
         UpdateInventory();
-
-        // Check if the focused object is an ItemObject, and set it as the heldObject
-        if (InteractionFinder.main.Focus is null) return;
-        if (InteractionFinder.main.Focus is not ItemObject) return;
-        heldObject = InteractionFinder.main.Focus as ItemObject;
     }
 
     // Update the inventory's icons with the current items
     public void UpdateInventory()
     {
+        if(!window.activeSelf) return;
+        
+        window.SetActive(isActiveWindow);
+        if (!isActiveWindow) return;
+
         var items = inventory.GetInventory;
         for (int i = 0; i < icons.Length; i++)
         {
             if (i >= items.Length) return;
             icons[i].AssignItem(items[i]);
             icons[i].gameObject.SetActive(i < items.Length);
+            icons[i].GetComponent<Image>().enabled = true;
+            icons[i].transform.GetChild(0).GetComponent<Image>().enabled = true;
         }
     }
 
@@ -79,40 +104,41 @@ public class InventoryGUI : MonoBehaviour
     public void SelectIcon(int index)
     {
         selectedIcon = index;
-        icons[index].SetSelected(heldObject, true);
+        icons[index].SetSelected(Inventory.heldObject, true);
     }
 
     // Deselect an inventory icon
     public void DeSelectIcon(int index)
     {
         selectedIcon = -1;
-        icons[index].SetSelected(heldObject, false);
+        icons[index].SetSelected(Inventory.heldObject, false);
     }
 
     // Set the item at the specified index
     public void SetItem(int index)
     {
+        Debug.Log($"SetItem [{index}] \n" +
+            $"Item: {(Inventory.heldObject ? Inventory.heldObject.name : "<empty>")}" +
+            $"Active: {(InventoryGUI.activeWindow ? InventoryGUI.activeWindow.name : "<empty>")}");
+
         // Return if there is no held object or the index is invalid
-        if (!heldObject || index < 0) return;
+        if (!Inventory.heldObject || index < 0) return;
 
         // Add the held object to the inventory or move it to a free slot
         if (!inventory.ItemAtSlot(index))
         {
-            inventory.AddItem(heldObject.item, index);
+            inventory.AddItem(Inventory.heldObject.item, index);
+            Debug.Log($"SetItem A [{index}]");
         }
         else if (inventory.HasFreeSlot(out int slotIndex))
         {
             inventory.MoveItem(index, slotIndex);
-            inventory.AddItem(heldObject.item, index);
-        }
-        else
-        {
-            // Drop the item in the slot on the floor and add the current held object
-            // Implement your logic to drop the item in the world here
-        }
+            inventory.AddItem(Inventory.heldObject.item, index);
+            Debug.Log($"SetItem B [{index}]");
+        } 
 
         // Destroy the held object's game object and set heldObject to null
-        Destroy(heldObject.gameObject);
-        heldObject = null;
+        Destroy(Inventory.heldObject.gameObject);
+        Inventory.heldObject = null;
     }
 }

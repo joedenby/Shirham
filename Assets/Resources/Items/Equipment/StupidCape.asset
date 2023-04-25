@@ -10,11 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c608c64888f9d4c4c9834fc8747fd5e3, type: 3}
-  m_Name: Needle
+  m_Name: StupidCape
   m_EditorClassIdentifier: 
-  icon: {fileID: 969911064562707275, guid: da88e1b2d1e6dc448bde9d22201c4ebc, type: 3}
-  name: Needle
-  description: Very thin and very pointy.
-  weight: 0.5
-  price: 12
+  icon: {fileID: 21300000, guid: 55bcacee5fd41654190caeb4abc46562, type: 3}
+  name: Stupid Cape
+  description: A cape for stupid people... like you.
+  weight: 0.2
+  price: 2
   rarity: 0
+  equipType: 4
+  stats:
+    str: 0
+    mag: 0
+    end: 0
+  enhancments: []
+  resistances: []

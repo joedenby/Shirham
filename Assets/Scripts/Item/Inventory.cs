@@ -17,18 +17,33 @@ public class Inventory : MonoBehaviour
     // Flag to set the inventory as large or small
     [SerializeField] private bool isLarge = false;
 
+    // Flag to set the inventory as open or closed
+    public InventoryRights permissions = InventoryRights.AddOnly;
+    public enum InventoryRights { 
+        Full,       // Can add and remove items
+        AddOnly,    // Can only add items
+        RemoveOnly, // Can only remove items
+        Disabled    // Cannot add or remove items
+    }
+
+    // Declare public static field to store the currently held object
+    public static ItemObject heldObject;
+
     // Public getter to return the items in the inventory
     public Item[] GetInventory => items;
 
     [Header("Events")]
     // UnityEvent to notify when the inventory has been updated
     public UnityEvent onInventoryUpdate = new UnityEvent();
+    public static UnityEvent onItemPickUp = new UnityEvent();
+    public static UnityEvent onItemDrop = new UnityEvent();
 
 
 
     // Called when the script is loaded or a value is changed in the Inspector
-    private void OnValidate() =>
+    private void OnValidate() {
         MakeLarge(isLarge);
+    }
 
 
     // Update the inventory size and rearrange the items based on the "enabled" parameter

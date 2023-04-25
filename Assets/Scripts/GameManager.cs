@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using System.Linq;
 using System;
 using Object = UnityEngine.Object;
-using System.Xml;
-using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem.UI;
 
@@ -341,10 +339,10 @@ namespace GameManager
             [RuntimeInitializeOnLoadMethod]
             private static void OnLoad()
             {
-                InputManager.PlayerInput().MoveRMB.Enable();
-                InputManager.PlayerInput().MoveRMB.performed += evt => SetWayPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                InputManager.PlayerInput().Move.performed += evt => MovePlayer(true);
-                InputManager.PlayerInput().Move.canceled += evt => MovePlayer(false);
+                InputManager.PlayerInput.MoveRMB.Enable();
+                InputManager.PlayerInput.MoveRMB.performed += evt => SetWayPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                InputManager.PlayerInput.Move.performed += evt => MovePlayer(true);
+                InputManager.PlayerInput.Move.canceled += evt => MovePlayer(false);
 
             }
 
@@ -643,7 +641,7 @@ namespace GameManager
             private static async void SetUpBattle()
             {
                 Units.UnitManager.Player.StopMoving();
-                InputManager.PlayerInput().Disable();
+                InputManager.PlayerInput.Disable();
                 SetUpGrid();
 
                 await Task.Delay(50);
@@ -692,7 +690,7 @@ namespace GameManager
 
                 CameraController.main.CenterBounds(BattleUnits);
 
-                CurrentUnit.combatant.MP = CurrentUnit.combatant.MAXMP();
+                CurrentUnit.combatant.MP = CurrentUnit.combatant.MAXMP;
                 if (CurrentUnit.IsEnemy())
                 {
                     BattleUI.instance.Disable();
@@ -784,7 +782,7 @@ namespace GameManager
                 }
 
 
-                BattleUnits = BattleUnits.OrderBy(x => x.combatant.MAXMP()).ToList();
+                BattleUnits = BattleUnits.OrderBy(x => x.combatant.MAXMP).ToList();
 
                 foreach (UnitController unit in BattleUnits) {
                     TurnOrder.Push(unit);
@@ -1065,7 +1063,7 @@ namespace GameManager
                 List<BattleSquare> squares = new List<BattleSquare>();
                 var pmSQ = GetSquareViaUnit(unit);
                 var pmVector = Coordinates(pmSQ);
-                Pattern pattern = unit.combatant.Movement.pattern;
+                Pattern pattern = unit.combatant.movement.pattern;
 
                 
                 //For every element in sequence of patterns
@@ -1596,8 +1594,8 @@ namespace GameManager
 
                 Debug.Log($"Caster: {(caster == null ? "NULL" : caster)} | Target: {(target == null ? "NULL" : target)}");
 
-                Elemental[] casterEnhancement = caster.GetInhabitedUnits()[0].combatant.enhancement;
-                Elemental[] targetResistance = target.GetInhabitedUnits()[0].combatant.resitance;
+                Elemental[] casterEnhancement = caster.GetInhabitedUnits()[0].combatant.combatantEnhancements;
+                Elemental[] targetResistance = target.GetInhabitedUnits()[0].combatant.combatantResistances;
 
                 Elemental[] damage = Elemental.NewElementalTable();
                 Elemental x;
@@ -1722,12 +1720,19 @@ namespace GameManager
             // all inputs are defined.
             private static InputMaster Master = new InputMaster();
 
+            [RuntimeInitializeOnLoadMethod]
+            private static void OnLoad()
+            {
+                PlayerInput.Enable();
+                CameraInput.Enable();
+                BattleInput.Disable();
+            }
 
-            public static InputMaster.PlayerActions PlayerInput() => Master.Player;
+            public static InputMaster.PlayerActions PlayerInput => Master.Player;
 
-            public static InputMaster.CameraActions CameraInput() => Master.Camera;
+            public static InputMaster.CameraActions CameraInput => Master.Camera;
 
-            public static InputMaster.BattleActions BattleInput() => Master.Battle;
+            public static InputMaster.BattleActions BattleInput => Master.Battle;
             
         }
 }

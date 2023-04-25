@@ -13,7 +13,7 @@ public class ItemIcon : MonoBehaviour
 {
     [SerializeField] private Item item;
     [SerializeField] private Sprite defaultIcon;
-    [SerializeField] private Inventory inventory;
+    public Inventory inventory;
 
     private Image iconImage => GetComponent<Image>();
     private Image itemImage => transform.GetChild(0).GetComponent<Image>();
@@ -28,6 +28,7 @@ public class ItemIcon : MonoBehaviour
     // Subscribe to the inventory update event in the Start method.
     private void Start() =>
         inventory.onInventoryUpdate.AddListener(UpdateIcon);
+    
 
     // Assign a new item to the icon.
     public void AssignItem(Item newItem) =>
@@ -36,8 +37,9 @@ public class ItemIcon : MonoBehaviour
     // Update the icon when dragging is active.
     private void Update()
     {
-        if (!isBeingDragged) return;
-            InventoryGUI.heldObject.transform.position = mousePosition;
+        if (!isBeingDragged || !Inventory.heldObject) return;
+
+        Inventory.heldObject.transform.position = mousePosition;
     }
 
     // Update the icon when changes are made in the editor.
@@ -73,24 +75,21 @@ public class ItemIcon : MonoBehaviour
         if (active)
         {
             returnPosition = transform.position;
-
-            InventoryGUI.heldObject = ItemObject.Instantiate(item, mousePosition);
-            InventoryGUI.heldObject.SetToTopLayer(true);
+            
+            Inventory.heldObject = ItemObject.Instantiate(item, mousePosition);
+            Inventory.heldObject.SetToTopLayer(true);
+            inventory.RemoveItem(index);
         }
         else
         {
-            if (GameManager.Hub.Navigation.ItemSafeLocation(mousePosition))
+            if (!InventoryGUI.activeWindow && GameManager.Hub.Navigation.ItemSafeLocation(mousePosition))
             {
-                InventoryGUI.heldObject.SetPosition(mousePosition);
-                InventoryGUI.heldObject.SetToTopLayer(false);
+                Inventory.heldObject.SetPosition(mousePosition);
+                Inventory.heldObject.SetToTopLayer(false);
                 inventory.RemoveItem(index);
-            }
-            else {
-                Destroy(InventoryGUI.heldObject.gameObject);
             }
 
             transform.position = returnPosition;
-            InventoryGUI.heldObject = null;
         }
 
         iconImage.enabled = !active;

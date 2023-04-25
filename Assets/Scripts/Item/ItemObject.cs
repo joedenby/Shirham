@@ -77,6 +77,8 @@ public class ItemObject : Interactable
     private void OnMouseDown()  {
         _zCoordinate = _mainCamera.WorldToScreenPoint(gameObject.transform.position).z;
         _offset = gameObject.transform.position - GetMouseWorldPosition();
+        Inventory.onItemPickUp?.Invoke();
+        Inventory.heldObject = this;
         SetToTopLayer(true);
         SetPulse(false);
     }
@@ -98,6 +100,10 @@ public class ItemObject : Interactable
         SetToTopLayer(false);
         SetPulse(true);
         SetPosition(transform.position);
+        Inventory.onItemDrop?.Invoke();
+
+        if(!InventoryGUI.activeWindow)
+            Inventory.heldObject = null;
     }
 
     public void SetPosition(Vector2 location) {

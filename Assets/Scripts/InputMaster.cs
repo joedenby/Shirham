@@ -53,6 +53,15 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""processors"": ""NormalizeVector2"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""HUD"",
+                    ""type"": ""Button"",
+                    ""id"": ""71c3fca5-a268-4f0e-96a1-ce2ab86f6500"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -187,6 +196,17 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1f823987-79f5-4ae3-83df-86ccffc1940c"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""HUD"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -408,6 +428,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         m_Player_MoveRMB = m_Player.FindAction("MoveRMB", throwIfNotFound: true);
         m_Player_Select = m_Player.FindAction("Select", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
+        m_Player_HUD = m_Player.FindAction("HUD", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Move = m_Camera.FindAction("Move", throwIfNotFound: true);
@@ -479,6 +500,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_MoveRMB;
     private readonly InputAction m_Player_Select;
     private readonly InputAction m_Player_Move;
+    private readonly InputAction m_Player_HUD;
     public struct PlayerActions
     {
         private @InputMaster m_Wrapper;
@@ -486,6 +508,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         public InputAction @MoveRMB => m_Wrapper.m_Player_MoveRMB;
         public InputAction @Select => m_Wrapper.m_Player_Select;
         public InputAction @Move => m_Wrapper.m_Player_Move;
+        public InputAction @HUD => m_Wrapper.m_Player_HUD;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -504,6 +527,9 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 @Move.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
+                @HUD.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHUD;
+                @HUD.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHUD;
+                @HUD.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHUD;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -517,6 +543,9 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
+                @HUD.started += instance.OnHUD;
+                @HUD.performed += instance.OnHUD;
+                @HUD.canceled += instance.OnHUD;
             }
         }
     }
@@ -634,6 +663,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         void OnMoveRMB(InputAction.CallbackContext context);
         void OnSelect(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
+        void OnHUD(InputAction.CallbackContext context);
     }
     public interface ICameraActions
     {

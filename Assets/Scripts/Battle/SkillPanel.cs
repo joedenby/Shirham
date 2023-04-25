@@ -11,8 +11,8 @@ public class SkillPanel : UIComponent
 
         Combatant combatant = BattleSystem.GetCurrentUnit().combatant;
         for (int i = 0; i < skillIcons.Length; i++) {
-            if (i < combatant.Skills.Count) {
-                skillIcons[i].Set(combatant.Skills[i]);
+            if (i < combatant.skills.Count) {
+                skillIcons[i].Set(combatant.skills[i]);
                 skillIcons[i].gameObject.SetActive(true);
             }
             else {

@@ -101,6 +101,7 @@ public class Elemental
 
         return left;
     }
+    
     public static Elemental[] Neg(Elemental[] left, Elemental[] right)
     {
         if (left.Length != right.Length) {
@@ -147,6 +148,9 @@ public class Elemental
 
         return false;
     }
-    public static Elemental operator +(Elemental left, Elemental right) => new Elemental(left.elementalType, (left.value + right.value));
-    public static Elemental operator -(Elemental left, Elemental right) => new Elemental(left.elementalType, (left.value - right.value));
+    public static Elemental operator +(Elemental left, Elemental right) => 
+        new Elemental(left.elementalType, (left.value + right.value));
+    public static Elemental operator -(Elemental left, Elemental right) => 
+        new Elemental(left.elementalType, (left.value - right.value));
+
 }

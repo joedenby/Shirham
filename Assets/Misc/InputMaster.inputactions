@@ -31,6 +31,15 @@
                     "processors": "NormalizeVector2",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "HUD",
+                    "type": "Button",
+                    "id": "71c3fca5-a268-4f0e-96a1-ce2ab86f6500",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -165,6 +174,17 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "1f823987-79f5-4ae3-83df-86ccffc1940c",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "HUD",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

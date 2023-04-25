@@ -19,7 +19,7 @@ public class IAttack : IModule
         if(unit.combatant.MP <= 0 || baseValue == 0) return 0;
 
         BattleSquare center = BattleGrid.GetSquareViaUnit(unit);
-        Skill[] unitSkills = unit.combatant.Skills.ToArray();
+        Skill[] unitSkills = unit.combatant.skills.ToArray();
         float c = 0;
 
         foreach(Skill skill in unitSkills) {
@@ -39,7 +39,7 @@ public class IAttack : IModule
                 //Valid target, do the math.
                 Elemental[] damageAsElementalTable = Parse.ParseDamage(instruction.action.value, center, sq);
                 float damage = Elemental.TotalValue(damageAsElementalTable);
-                float hp = (float)(damage / targetUnit.combatant.MaxHP());
+                float hp = (float)(damage / targetUnit.combatant.MaxHP);
                 float a = unit.combatant.GetAggroRelative(targetUnit.combatant, BattleGrid.Distance(center, sq));
 
                 float confidence = baseValue + (hp + (a * 0.1f));
