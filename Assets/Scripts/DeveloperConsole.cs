@@ -325,7 +325,6 @@ public class Grid : Command
 {
     public override void Execute(string[] args)
     {
-
         switch (args[0]) {
             case "paint":
                 if (args.Length < 4)
@@ -366,6 +365,58 @@ public class Grid : Command
 
 
                 return;
+        }
+    }
+}
+
+public class Obj : Command
+{
+    public override void Execute(string[] args)
+    {
+        if (args.Length == 0) return;
+        switch (args[0])
+        {
+            case "spawn":
+                if (args.Length < 2) {
+                    Debug.Log($"Usage: spawn 'item' quantity x y" +
+                    $"\nargs[{args.Length}]");
+                    return;
+                }
+
+                var items = Resources.LoadAll<Item>("Items");
+                var obj = items.FirstOrDefault(x => x.name.ToLower().Equals(args[1].ToLower()));
+
+                if (obj is null) {
+                    Debug.Log($"Item '{args[1]}' not found. [{items.Length}]");
+                    return;
+                }
+
+                int quantity = 1;
+                if (args.Length > 2) {
+                    quantity = int.TryParse(args[2], out int q) ? q : 1;
+                    quantity = quantity > 0 ? quantity : 1;
+                }
+                    
+
+                Vector2 pos = new Vector2(0, 0);
+                if (args.Length > 4)
+                {
+                    float posX = int.TryParse(args[3], out int x) ? x : GameManager.Units.UnitManager.Player.transform.position.x;
+                    float posY = int.TryParse(args[4], out int y) ? y : GameManager.Units.UnitManager.Player.transform.position.y;
+                    pos = GameManager.Hub.Navigation.CenterSquare(new Vector2(posX, posY));
+                }
+                else {
+                    Vector2 playerPos = GameManager.Units.UnitManager.Player.transform.position;
+                    pos = GameManager.Hub.Navigation.CenterSquare(new Vector2(playerPos.x, playerPos.y));
+                }
+                
+
+                for (int i = 0; i < quantity; i++) {
+                    var itemObj = ItemObject.Instantiate(obj, pos);
+                }
+
+                break;
+
         }
     }
 }
