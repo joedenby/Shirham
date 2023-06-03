@@ -14,6 +14,8 @@ public class EquipmentManager : MonoBehaviour
     public EquipSlot back = new EquipSlot(EquipType.Back);
 
 
+
+
     private void OnValidate()
     {
         head.UpdateSprite();
@@ -24,17 +26,9 @@ public class EquipmentManager : MonoBehaviour
     }
 
     public void EquipItem(Equipment item, out Equipment previous) {
-        var slot = item.equipType switch  {
-            _ when item.equipType == EquipType.Head => head,
-            _ when item.equipType == EquipType.Armor => armor,
-            _ when item.equipType == EquipType.MainHand => mainHand,
-            _ when item.equipType == EquipType.OffHand => offHand,
-            _ when item.equipType == EquipType.Back => back,
-            _ => null
-        };
+        var slot = GetSlot(item.equipType);
 
-        if (slot != null)
-        {
+        if (slot != null)  {
             previous = slot.item;
             slot.SetItem(item);
             return;
@@ -42,6 +36,15 @@ public class EquipmentManager : MonoBehaviour
 
         previous = null;
         Debug.LogError($"No slot found for item {item.name}");
+    }
+
+    public void RemoveItem(EquipType equipType)
+    {
+        GetSlot(equipType).SetItem(null);
+    }
+
+    public Equipment GetItem(EquipType equipType) {
+        return GetSlot(equipType)?.item;
     }
 
     public Stats GearStats() { 
@@ -70,6 +73,47 @@ public class EquipmentManager : MonoBehaviour
         return Elemental.Sum(result, back.item.resistances);
     }
 
+    public EquipSlot GetSlot(EquipType equipType) {
+        return equipType switch
+        {
+            _ when equipType == EquipType.Head => head,
+            _ when equipType == EquipType.Armor => armor,
+            _ when equipType == EquipType.MainHand => mainHand,
+            _ when equipType == EquipType.OffHand => offHand,
+            _ when equipType == EquipType.Back => back,
+            _ => null
+        };
+    }
+
+    [ContextMenu("Assign Sprite Renderers")]
+    public void AssignSpriteRenderers() {
+        //Head child @ 2, 0, 4, 0
+        Transform child = Util.GetChild(transform, 0, 0 ,0 , 2, 0, 4, 0);
+        head.spriteRenderer = head.spriteRenderer ? head.spriteRenderer :
+            child.GetComponent<SpriteRenderer>();
+
+        //Armor child @ 1, 1, 0
+        child = Util.GetChild(transform, 0, 0, 0, 1, 1, 0);
+        armor.spriteRenderer = armor.spriteRenderer ? armor.spriteRenderer :
+            child.GetComponent<SpriteRenderer>();
+
+        //MainHand child @ 3, 1, 0, 1, 0
+        child = Util.GetChild(transform, 0, 0, 0, 3, 1, 0, 1, 0);
+        mainHand.spriteRenderer = mainHand.spriteRenderer ? mainHand.spriteRenderer : 
+            child.GetComponent<SpriteRenderer>();
+
+        //OffHand child @ 3, 0, 0, 2, 0
+        child = Util.GetChild(transform, 0, 0, 0, 3, 0, 0, 2, 0);
+        offHand.spriteRenderer = offHand.spriteRenderer ? offHand.spriteRenderer :
+            child.GetComponent<SpriteRenderer>();
+
+        //Back child @ 0, 0
+        child = Util.GetChild(transform, 0, 0, 0, 0, 0);
+        back.spriteRenderer = back.spriteRenderer ? back.spriteRenderer :
+            child.GetComponent<SpriteRenderer>();
+     
+    }
+
     [System.Serializable]
     public class EquipSlot
     {
@@ -78,13 +122,14 @@ public class EquipmentManager : MonoBehaviour
         private EquipType equipType;
         public Stats stats => item ? item.stats : new Stats();
 
+
         public EquipSlot(EquipType equipType) {
             this.equipType = equipType;
         }
 
         public void SetItem(Equipment item) {
-            if (item.equipType != equipType) { 
-                Debug.LogError($"Item {item.name} is not a {equipType}!");
+            if (item && item.equipType != equipType) { 
+                Debug.LogError($"Item {item.name} is not {equipType} type!");
                 return;
             }
 
@@ -94,8 +139,13 @@ public class EquipmentManager : MonoBehaviour
 
         public void UpdateSprite() {
             if (!spriteRenderer) return;
-
             spriteRenderer.sprite = item?.icon;
         }
+
+        public void AssignMaterial(Material mat) {
+            if (!spriteRenderer) return;
+            spriteRenderer.material = mat;
+        }
+
     }
 }

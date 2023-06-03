@@ -8,6 +8,8 @@ using System;
 using Object = UnityEngine.Object;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem.UI;
+using UnityEditorInternal;
+using GameManager.Hub;
 
 namespace GameManager
 {
@@ -616,14 +618,17 @@ namespace GameManager
             public static async void GoBattle(params EnemyUnit[] enemyArr)
             {
                 if (enemyArr.Length == 0) return;
-                if (Enemies.Count == 0) SetUpBattle();
-
-                //Add Enemy to battle
-                foreach (EnemyUnit enemy in enemyArr)
+                if (Enemies.Count == 0)
                 {
-                    enemy.FaceLocation(Units.UnitManager.Player.transform.position);
-                    enemy.AnimationTrigger("Suprise");
-                    Enemies.Add(enemy);
+                    //Add Enemy to battle
+                    foreach (EnemyUnit enemy in enemyArr)
+                    {
+                        enemy.FaceLocation(Units.UnitManager.Player.transform.position);
+                        enemy.AnimationTrigger("Suprise");
+                        Enemies.Add(enemy);
+                    }
+
+                    SetUpBattle();
                 }
 
                 await Task.Delay(1000);
@@ -792,16 +797,12 @@ namespace GameManager
 
             private static void SetUpGrid()
             {
-                var max = 6f;   // Always minimum 8x8 grid
-                foreach (EnemyUnit unit in Enemies)
-                {
-                    var dist = Vector2.Distance(Units.UnitManager.Player.transform.position, unit.transform.position);
-                    max = (dist > max) ? dist : max;
-                    if (max > 8) break; //Max possible size of grid will be 8
-                }
+                var min = 5;   // Always minimum 5x5 grid
+                var size = min - Enemies.Count(); // Minimum size - enemies
+                size = (size < 0) ? (min + -size) : min; // If enemy count is greater than min, size is enemy count
 
-                // Create new grid based on max distance
-                BattleGrid.NewGrid(Mathf.RoundToInt((max <= 8) ? max : 8));
+                // Create new grid based on size
+                BattleGrid.NewGrid(size);
             }
 
             public static EnemyUnit GetClosestEnemy()
@@ -888,26 +889,32 @@ namespace GameManager
                 var player = Units.UnitManager.Player;    //Get Player
                 if (!player) return;    //Can't center grid with no player.
 
+                var playerPosition = Navigation.CenterSquare(player.transform.position); //Get player position as center square
+                var enemy = BattleSystem.GetClosestEnemy();   //Get closest enemy
+                Vector2 dir = (Vector2)(enemy.transform.position - player.transform.position); //Get direction to enemy
+                dir = new Vector2(Util.ForceNormalize(dir.x), Util.ForceNormalize(dir.y));
+
                 ClearGrid();    //Destroy any previous grid
                 GridObjs = new BattleSquare[size, size];    //Initialize dynamic array to fit size
                 InhabitedSquares.Clear();   //Clear Inhabited list
 
-                var playerPos = player.transform.position;  //Get Player position
-                Vector2 start = new (playerPos.x - Mathf.Abs(size / 2),   // x
-                                                playerPos.y - Mathf.Abs(size / 2)); // y
+                //  Get center location
+                var centerDistance = (size / 2);
+                var center = new Vector2(playerPosition.x + (dir.x * centerDistance),
+                                       playerPosition.y + (dir.y * centerDistance));
 
-                for (int y = 0; y < size; y++) {
-                    for (int x = 0; x < size; x++) {
-                        Vector2 location = new (start.x + x, start.y + y); //Get next location
-                        if (ValidSquareLocation(location))
-                        {    //Is the location inhabitable?
-                            //Create new square at location
-                            BattleSquare newSq = InstantitateSquare(location);
-                            newSq.name = $"BattleSquare ({x},{y})";
-                            GridObjs[x, y] = newSq;
-                        }
-                    }
-                }
+
+                Debug.Log($"Center: {center} | Dir: {dir}");
+
+                // Move the grid parent to center position
+                if (!Parent) Parent = new GameObject("BattleGrid");
+                Parent.transform.position = center;
+
+                // Establish center index
+                Vector2Int centerIndex = new Vector2Int(centerDistance, centerDistance);
+
+                // Flood fill
+                FloodFillSquare(centerIndex);
 
                 BattleEvent.PartyMemberChangeEvent += ResetGrid;
             }
@@ -1065,7 +1072,7 @@ namespace GameManager
                 var pmVector = Coordinates(pmSQ);
                 Pattern pattern = unit.combatant.movement.pattern;
 
-                
+
                 //For every element in sequence of patterns
                 foreach (Vector2 element in pattern.sequence)
                 {
@@ -1154,14 +1161,14 @@ namespace GameManager
             public static BattleSquare[] Radial(BattleSquare square) {
                 List<BattleSquare> squares = new List<BattleSquare>();
 
-                Vector2[] radialV2 = new Vector2[] { 
+                Vector2[] radialV2 = new Vector2[] {
                     Vector2.down, Vector2.left, Vector2.right, Vector2.up,
                     (Vector2.up + Vector2.right), ((Vector2.down + Vector2.right)),
                     (Vector2.down + Vector2.left), (Vector2.up + Vector2.left)
                 };
 
                 Vector2 center = Coordinates(square);
-                foreach(Vector2 v2 in radialV2) {
+                foreach (Vector2 v2 in radialV2) {
                     BattleSquare sq = GetSquareAtCoordinate(center + v2);
                     if (sq) squares.Add(sq);
                 }
@@ -1225,7 +1232,7 @@ namespace GameManager
                 if (charge) unit.combatant.MP -= dist;
 
                 UnitToSquare(unit, square);
-            } 
+            }
 
             /**
              * Returns the square given unit is inhabiting, null
@@ -1254,7 +1261,6 @@ namespace GameManager
             {
                 int size = GridObjs.GetLength(1) - 1;   //Get (column) size of grid
 
-                Debug.LogWarning($"There are {BattleSystem.Enemies.Count} enemies ...");
                 bool rightSide = BattleSystem.GetClosestEnemy().transform.position.x > BattleSystem.Party[0].transform.position.x;
                 int x = rightSide ? size : 0;     //Set x (column) to side.
                 int y = 0;    //Go from bottom (row)
@@ -1268,13 +1274,11 @@ namespace GameManager
                     while (sq == null || sq.ContainsUnits())
                     {
                         //Is a valid square there? (null = non-inhabitable)
-                        Debug.Log($"Invalid: ({x}, {y}) for [{(i + 1)}] " +
-                            $"\nProblem: {(sq == null ? "NULL Square" : "Contains Units")}");
                         if ((y + 1) > size)
                         {  //Are we at top?
                             y = 0;
                             x = rightSide ? (x - 1) : (x + 1);    //...and go no next column
-                            Debug.Log($"Snap: {x} R[{rightSide}]");
+                            x = rightSide ? (x - 1) : (x + 1);    //...and go no next column
                             continue;
                         }
 
@@ -1382,65 +1386,60 @@ namespace GameManager
                 return Vector2.zero;
             }
 
-            public static BattleSquare GetSquareAtLocation(Vector2 location) {
-
-                //No grid instantiated
-                if(GridObjs == null) {
-                    Debug.LogError("No grid instantiated. Returning null.");
-                    return null;
-                }
-
-                //Check for initial square
-                var sq = ReturnFirstSquare();
-                if (!sq) {
-                    Debug.LogError("No initial square instantiated. Returning null.");
-                    return null;
-                }
-
-                //Abs location as V2Int
-                Vector2Int loc = new Vector2Int(
-                    Mathf.Abs(Mathf.FloorToInt(location.x)), Mathf.Abs(Mathf.FloorToInt(location.y)));
-
-                //Abs intial square as V2Int
-                Vector2Int firstLoc = new Vector2Int(
-                    Mathf.Abs(Mathf.FloorToInt(sq.transform.position.x)), Mathf.Abs(Mathf.FloorToInt(sq.transform.position.y)));
-
-                int x = Mathf.Clamp(Mathf.Abs(loc.x - firstLoc.x), 0, GridObjs.GetLength(0) - 1);
-                int y = Mathf.Clamp(Mathf.Abs(loc.y - firstLoc.y), 0, GridObjs.GetLength(1) - 1);
-
-                Debug.Log($"[GetSquareAtLocation] " +
-                    $"\nLoc: {loc}" +
-                    $"\nFirstLoc: {firstLoc}" +
-                    $"\nx: {x} y: {y}" +
-                    $"\nGridObjsLength: {GridObjs.GetLength(0)}");
-
-                return GridObjs[x, y];
-            }
-
-            private static BattleSquare ReturnFirstSquare()
+            private static void FloodFillSquare(Vector2Int index)
             {
-                for (int y = 0; y < GridObjs.GetLength(1); y++)
-                {
-                    for (int x = 0; x < GridObjs.GetLength(0); x++)
-                    {
-                        if (GridObjs[x, y])
-                            return GridObjs[x, y];
+                // x in bounds?
+                if (!Util.InBounds(index.x, 0, GridObjs.GetLength(0) - 1))
+                    return;
+
+                // y in bounds?
+                if (!Util.InBounds(index.y, 0, GridObjs.GetLength(1) - 1))
+                    return;
+
+                // Square already here?
+                if (GridObjs[index.x, index.y] is not null)
+                    return;
+
+                // Work out world location for index
+                int centerSize = GridObjs.GetLength(0) / 2;
+                Vector2Int centerIndex = new Vector2Int(centerSize, centerSize);
+                Vector2 centerPos = Parent.transform.position;
+                Vector2 worldPosition = new Vector2(centerPos.x - (centerIndex.x - index.x),
+                            centerPos.y - (centerIndex.y - index.y));
+
+
+                // Does this world position have an obstacle?
+                Collider2D[] hits = Physics2D.OverlapCircleAll(worldPosition, 0.33f);
+                foreach (Collider2D h in hits) {
+                    if (h.gameObject.layer == 3) {
+                        if(centerIndex == index) {
+                            Vector2 newCenter = Util.Triangulate(worldPosition, 
+                                Units.UnitManager.Player.transform.position, 
+                                BattleSystem.GetClosestEnemy().transform.position);
+
+                            Parent.transform.position = Navigation.CenterSquare(newCenter);
+                            FloodFillSquare(index);
+                        }
+
+                        return;
                     }
                 }
 
-                return null;
-            }
 
-            private static BattleSquare InstantitateSquare(Vector2 location)
-            {
-                if (!Parent) Parent = new GameObject("[BATTLE] BattleGrid");
+                // No obstacle, so we add a square here
+                GridObjs[index.x, index.y] = GameObject.Instantiate(SquarePrefab, Parent.transform).GetComponent<BattleSquare>();
+                GridObjs[index.x, index.y].transform.position = worldPosition;
 
-                var newSq = Object.Instantiate(SquarePrefab, Parent.transform);
-                newSq.transform.position = new Vector2(Mathf.Floor(location.x) + 0.5f, Mathf.Floor(location.y) + 0.5f);
+                // Define radial and check for adjacent squares
+                Vector2[] radial = new Vector2[] {
+                    new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0), new Vector2(1, -1),
+                    new Vector2(0, -1), new Vector2(-1, -1),  new Vector2(-1, 0),  new Vector2(-1, 1),
+                };
 
-                var bsComponent = newSq.GetComponent<BattleSquare>();
+                // Use recursion to call for all adjacent squares
+                foreach (Vector2 v2 in radial)
+                    FloodFillSquare(new Vector2Int(index.x + (int)v2.x, index.y + (int)v2.y));
 
-                return bsComponent;
             }
 
             public static void ResetGrid()
@@ -1453,22 +1452,11 @@ namespace GameManager
                 Collider2D[] hit2Ds = Physics2D.OverlapCircleAll(location, 0);
 
                 foreach (Collider2D hit in hit2Ds)
-                    if (hit.gameObject.layer == 3) return false;
-
-                if (!ReturnFirstSquare()) return true;
-                
-                Vector2[] radial = new Vector2[] {
-                    Vector2.left, Vector2.right, Vector2.up, Vector2.down,
-                    (Vector2.left + Vector2.up), (Vector2.right + Vector2.up),
-                    (Vector2.left + Vector2.down), (Vector2.right + Vector2.down)
-                };
-
-                foreach (Vector2 v2 in radial) { 
-                    if(GetSquareAtLocation(location + v2)) 
-                        return true;
+                if (hit.gameObject.layer == 3) {
+                        return false;
                 }
 
-                return false;
+                return true;
             }
 
         }

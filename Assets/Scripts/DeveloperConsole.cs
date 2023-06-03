@@ -399,8 +399,7 @@ public class Obj : Command
                     
 
                 Vector2 pos = new Vector2(0, 0);
-                if (args.Length > 4)
-                {
+                if (args.Length > 4)                {
                     float posX = int.TryParse(args[3], out int x) ? x : GameManager.Units.UnitManager.Player.transform.position.x;
                     float posY = int.TryParse(args[4], out int y) ? y : GameManager.Units.UnitManager.Player.transform.position.y;
                     pos = GameManager.Hub.Navigation.CenterSquare(new Vector2(posX, posY));

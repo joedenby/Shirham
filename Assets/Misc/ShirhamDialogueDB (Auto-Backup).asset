@@ -79,7 +79,37 @@ MonoBehaviour:
     spritePortrait: {fileID: 0}
     alternatePortraits: []
     spritePortraits: []
-  items: []
+  items:
+  - id: 1
+    fields:
+    - title: Name
+      value: Start of something new
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Pictures
+      value: '[]'
+      type: 3
+      typeString: CustomFieldType_Files
+    - title: Description
+      value: jOGoiwgjoeiwjgo
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Success Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Failure Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: State
+      value: unassigned
+      type: 0
+      typeString: CustomFieldType_QuestState
+    - title: Is Item
+      value: False
+      type: 2
+      typeString: CustomFieldType_Boolean
   locations: []
   variables: []
   conversations:
@@ -296,8 +326,8 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 1268.5216
-        y: 254.30267
+        x: 1269.6206
+        y: 249.90707
         width: 160
         height: 30
     - id: 4
@@ -464,11 +494,11 @@ MonoBehaviour:
       - title: Title
         value: Can Start Quest of the Quests
         type: 0
-        typeString: 
+        typeString: CustomFieldType_Text
       - title: Description
         value: 
         type: 0
-        typeString: 
+        typeString: CustomFieldType_Text
       - title: Actor
         value: 2
         type: 5
@@ -480,15 +510,15 @@ MonoBehaviour:
       - title: Menu Text
         value: 
         type: 0
-        typeString: 
+        typeString: CustomFieldType_Text
       - title: Dialogue Text
         value: 
         type: 0
-        typeString: 
+        typeString: CustomFieldType_Text
       - title: Sequence
         value: 
         type: 0
-        typeString: 
+        typeString: CustomFieldType_Text
       conversationID: 1
       isRoot: 0
       isGroup: 0
@@ -510,8 +540,8 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 1716.4716
-        y: 435.1851
+        x: 1721.1885
+        y: 432.35495
         width: 160
         height: 30
     - id: 9
@@ -559,13 +589,13 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 1594.7734
+        x: 1595.7168
         y: 528.5813
         width: 160
         height: 30
     entryGroups: []
-    canvasScrollPosition: {x: 1171.6224, y: 123.328}
-    canvasZoom: 1.06
+    canvasScrollPosition: {x: 1000.50885, y: 46.92542}
+    canvasZoom: 0.9099999
   syncInfo:
     syncActors: 0
     syncItems: 0

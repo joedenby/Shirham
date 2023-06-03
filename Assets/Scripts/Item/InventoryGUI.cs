@@ -117,24 +117,16 @@ public class InventoryGUI : MonoBehaviour
     // Set the item at the specified index
     public void SetItem(int index)
     {
-        Debug.Log($"SetItem [{index}] \n" +
-            $"Item: {(Inventory.heldObject ? Inventory.heldObject.name : "<empty>")}" +
-            $"Active: {(InventoryGUI.activeWindow ? InventoryGUI.activeWindow.name : "<empty>")}");
-
         // Return if there is no held object or the index is invalid
         if (!Inventory.heldObject || index < 0) return;
 
         // Add the held object to the inventory or move it to a free slot
-        if (!inventory.ItemAtSlot(index))
-        {
+        if (!inventory.ItemAtSlot(index)) {
             inventory.AddItem(Inventory.heldObject.item, index);
-            Debug.Log($"SetItem A [{index}]");
         }
-        else if (inventory.HasFreeSlot(out int slotIndex))
-        {
+        else if (inventory.HasFreeSlot(out int slotIndex)) {
             inventory.MoveItem(index, slotIndex);
             inventory.AddItem(Inventory.heldObject.item, index);
-            Debug.Log($"SetItem B [{index}]");
         } 
 
         // Destroy the held object's game object and set heldObject to null

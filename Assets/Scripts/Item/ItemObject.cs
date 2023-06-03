@@ -1,5 +1,7 @@
 using UnityEngine;
 using GameManager.Hub;
+using UnityEngine.EventSystems;
+using System.Runtime.CompilerServices;
 
 /**
  * ==================================== ItemObject.cs ====================================
@@ -18,6 +20,7 @@ public class ItemObject : Interactable
     // Private fields for handling item's dragging and positioning
     private Vector3 _offset;
     private float _zCoordinate;
+    public bool beingDragged;
     private Camera _mainCamera => CameraController.main.Camera;
 
 
@@ -37,7 +40,7 @@ public class ItemObject : Interactable
     }
 
     // Create and return a new ItemObject instance with the specified Item and position in the game world
-    public static ItemObject Instantiate(Item item, Vector2 position = new Vector2())  {
+    public static ItemObject Instantiate(Item item, Vector2 position = new Vector2(), bool startDragged = false)  {
         if (!item)
         {
             Debug.LogError("Tried to instantiate null item");
@@ -50,6 +53,11 @@ public class ItemObject : Interactable
         itemObject.name = $"[Item] {(item ? item.name : "<empty>")}";
         itemObject.spriteRenderer.sprite = item ? item.icon : null;
         itemObject.item = item;
+        itemObject.beingDragged = startDragged;
+
+        if (startDragged)
+            Inventory.heldObject = itemObject;
+
         return itemObject;
     }
 
@@ -73,6 +81,11 @@ public class ItemObject : Interactable
             .setLoopPingPong();
     }
 
+    private void Update() {
+        if (!beingDragged) return;
+        transform.position = new Vector3(GetMouseWorldPosition().x + _offset.x, GetMouseWorldPosition().y + _offset.y, transform.position.z);
+    }
+
     // Update private fields and item's layer when the mouse button is pressed down
     private void OnMouseDown()  {
         _zCoordinate = _mainCamera.WorldToScreenPoint(gameObject.transform.position).z;
@@ -81,12 +94,9 @@ public class ItemObject : Interactable
         Inventory.heldObject = this;
         SetToTopLayer(true);
         SetPulse(false);
+        beingDragged = true;
     }
 
-    // Update the item's position as the mouse drags
-    private void OnMouseDrag() =>
-        transform.position = new Vector3(GetMouseWorldPosition().x + _offset.x, GetMouseWorldPosition().y + _offset.y, transform.position.z);
-    
 
     // Convert mouse position from screen to world coordinates
     private Vector3 GetMouseWorldPosition()  {
@@ -97,6 +107,7 @@ public class ItemObject : Interactable
 
     // Snap the item's position to the grid, reset its layer, and activate pulse effect when the mouse button is released
     private void OnMouseUp()  {
+        beingDragged = false;   
         SetToTopLayer(false);
         SetPulse(true);
         SetPosition(transform.position);

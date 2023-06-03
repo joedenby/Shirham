@@ -53,8 +53,8 @@ public class DebugInventoryStuff : MonoBehaviour
         debugText.text += $"\nHeld Item: {(Inventory.heldObject ? Inventory.heldObject.name : "<empty>")}";
     }
 
-    [ContextMenu("Add")]
-    private void Add() {
+    [ContextMenu("Add Canvas")]
+    private void AddCanvas() {
         Debug.Log("Started add...");
         var prefabs = Resources.LoadAll<GameObject>("Units");
         var unitCanvas = Resources.Load<GameObject>("Misc/UnitCanvas");
@@ -102,6 +102,4 @@ public class DebugInventoryStuff : MonoBehaviour
             DestroyImmediate(unitPrefabInstance);
         }
     }
-
-   
 }
