@@ -2,12 +2,17 @@ using GameManager.Battle;
 using GameManager.Units;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class EnemyUnit : UnitController
 {
     [Min(0)] 
     public float sightRadius = 3f;
     public float alertRadius = 6f;
+    public float raycastYOffset = 0.5f;
+
+    [SerializeField] 
+    private LayerMask sightLayer, obstacleLayer;
     private bool inBattle = false;
     private bool inRange => Vector2.Distance(UnitManager.Player.transform.position, transform.position) < (sightRadius * 1.5f);
     private Vector2 point;
@@ -71,21 +76,31 @@ public class EnemyUnit : UnitController
     }
 
     private bool HasPlayerSight() {
-        Vector2 dir = -(transform.position - UnitManager.Player.transform.position);
-        dir.y += 0.2f;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, sightRadius);
+        Vector2 origin = new Vector2(transform.position.x, transform.position.y + raycastYOffset);
+        Vector2 dir = -(origin - (Vector2)UnitManager.Player.transform.position);
+        RaycastHit2D obstacleHit = Physics2D.Raycast(origin, dir, sightRadius, obstacleLayer);
+        if(obstacleHit)
+        {
+            Debug.Log($"Obstacle: {obstacleHit.transform.name} ({obstacleHit.point})");
+            return false;
+        }
+
+        RaycastHit2D hit = Physics2D.Raycast(origin, dir, sightRadius, sightLayer);
         point = hit.point;
+
         return hit.collider != null && hit.collider.CompareTag("Player");
     }
 
     private void OnDrawGizmosSelected()
     {
-        if (!Application.isPlaying || !inRange)
+        if (!Application.isPlaying)
             return;
-        // Draws a 5 unit long red line in front of the object
+
+        Vector2 origin = new Vector2(transform.position.x, transform.position.y + raycastYOffset);
+
         Gizmos.color = HasPlayerSight() ? Color.red : Color.white;
         Gizmos.DrawWireSphere(transform.position, sightRadius);
         Gizmos.DrawSphere(point, 0.1f);
-        Gizmos.DrawLine((Vector2)transform.position, (Vector2)UnitManager.Player.transform.position);
+        Gizmos.DrawLine(origin, (Vector2)UnitManager.Player.transform.position);
     }
 }

@@ -1528,6 +1528,13 @@ MonoBehaviour:
   movementOverride: 0
   sightRadius: 3
   alertRadius: 6
+  raycastYOffset: 0.5
+  sightLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &6065103708905824205
 MonoBehaviour:
   m_ObjectHideFlags: 0
