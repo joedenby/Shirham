@@ -81,7 +81,6 @@ public class EnemyUnit : UnitController
         RaycastHit2D obstacleHit = Physics2D.Raycast(origin, dir, sightRadius, obstacleLayer);
         if(obstacleHit)
         {
-            Debug.Log($"Obstacle: {obstacleHit.transform.name} ({obstacleHit.point})");
             return false;
         }
 

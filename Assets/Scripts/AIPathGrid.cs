@@ -99,15 +99,14 @@ public class AIPathGrid : MonoBehaviour
 
     public AIPathNode NodeFromWorldPoint(Vector2 worldPosition)
     {
-        var pos = new Vector2(Mathf.FloorToInt(worldPosition.x) + 1, Mathf.FloorToInt(worldPosition.y) + 1);
+        var pos = new Vector2(Mathf.FloorToInt(worldPosition.x), Mathf.FloorToInt(worldPosition.y));
         float percentX = (pos.x + gridWorldSize.x / 2) / gridWorldSize.x;
         float percentY = (pos.y + gridWorldSize.y / 2) / gridWorldSize.y;
         percentX = Mathf.Clamp01(percentX);
         percentY = Mathf.Clamp01(percentY);
 
-        //Was rounded now changed to floor
-        int x = Mathf.FloorToInt((gridSizeX - 1) * percentX);
-        int y = Mathf.FloorToInt((gridSizeY - 1) * percentY);
+        int x = Mathf.FloorToInt((gridSizeX) * percentX);
+        int y = Mathf.FloorToInt((gridSizeY) * percentY);
         return grid[x, y];
     }
 

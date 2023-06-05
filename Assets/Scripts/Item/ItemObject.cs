@@ -24,6 +24,8 @@ public class ItemObject : Interactable
     private Camera _mainCamera => CameraController.main.Camera;
 
 
+
+
     // Set pulse effect active when the object is created in the game world
     private void Start() => 
         SetPulse(true);
@@ -31,7 +33,7 @@ public class ItemObject : Interactable
     // Cancel ongoing animations using LeanTween library when the object is disabled
     private void OnDisable() =>
         LeanTween.cancel(gameObject);
- 
+
 
     // Update the item's name and sprite in the Unity Editor when the script is loaded or a value is changed
     private void OnValidate() {
@@ -83,6 +85,11 @@ public class ItemObject : Interactable
 
     private void Update() {
         if (!beingDragged) return;
+        if (!Input.GetKey(KeyCode.Mouse0)) {
+            OnMouseUp();
+            return;
+        }
+
         transform.position = new Vector3(GetMouseWorldPosition().x + _offset.x, GetMouseWorldPosition().y + _offset.y, transform.position.z);
     }
 
@@ -97,7 +104,6 @@ public class ItemObject : Interactable
         beingDragged = true;
     }
 
-
     // Convert mouse position from screen to world coordinates
     private Vector3 GetMouseWorldPosition()  {
         Vector3 mousePoint = Input.mousePosition;
@@ -107,6 +113,7 @@ public class ItemObject : Interactable
 
     // Snap the item's position to the grid, reset its layer, and activate pulse effect when the mouse button is released
     private void OnMouseUp()  {
+        Debug.Log($"Up {name}");
         beingDragged = false;   
         SetToTopLayer(false);
         SetPulse(true);

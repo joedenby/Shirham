@@ -181,8 +181,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Unit: Unit009\nInventory: \n  [<empty>]\n  [<empty>]\n  [<empty>]\n  [<empty>]\n 
-    [<empty>]\n  [<empty>]\nSelected Icon: 0\nHeld Item: <empty>"
+  m_text: "Unit: Unit009\nInventory: \n  [Morning Star]\n  [Royal Armor]\n  [Basic
+    Shield]\n  [<empty>]\n  [<empty>]\n  [<empty>]\n  [<empty>]\n  [<empty>]\n  [<empty>]\n 
+    [<empty>]\n  [<empty>]\n  [<empty>]\nSelected Icon: 0\nHeld Item: <empty>"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
@@ -304,7 +305,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 268715584574420565, guid: 687e4d8e4a91a1a42a23f27d68cab803, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 727058287259375630, guid: 687e4d8e4a91a1a42a23f27d68cab803, type: 3}
       propertyPath: m_SizeDelta.x
@@ -419,9 +420,25 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1669170394077742615, guid: 687e4d8e4a91a1a42a23f27d68cab803, type: 3}
+      propertyPath: permissions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1669170394077742615, guid: 687e4d8e4a91a1a42a23f27d68cab803, type: 3}
       propertyPath: items.Array.size
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 1669170394077742615, guid: 687e4d8e4a91a1a42a23f27d68cab803, type: 3}
+      propertyPath: items.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 6362257991b2c1b4288b318132957ff0, type: 2}
+    - target: {fileID: 1669170394077742615, guid: 687e4d8e4a91a1a42a23f27d68cab803, type: 3}
+      propertyPath: items.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 39dea4fd16ec4384cbf103476c650935, type: 2}
+    - target: {fileID: 1669170394077742615, guid: 687e4d8e4a91a1a42a23f27d68cab803, type: 3}
+      propertyPath: items.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 044d153599e66c54390f9fc5ec2ea7fb, type: 2}
     - target: {fileID: 1846263589421784768, guid: 687e4d8e4a91a1a42a23f27d68cab803, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -627,6 +644,10 @@ PrefabInstance:
     - target: {fileID: 4217081954450336456, guid: 0f2c97a2df0ae2a4f9a139f446a61a6f, type: 3}
       propertyPath: m_Name
       value: Unit004
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217081954450336456, guid: 0f2c97a2df0ae2a4f9a139f446a61a6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f2c97a2df0ae2a4f9a139f446a61a6f, type: 3}
@@ -953,7 +974,7 @@ MonoBehaviour:
     m_Bits: 8
   gridWorldSize: {x: 30, y: 30}
   nodeRadius: 0.5
-  debugEnabled: 1
+  debugEnabled: 0
   showSelected: 0
   selected: {x: -100, y: -100}
   onlyDisplayPathGizmos: 0

@@ -28,23 +28,28 @@ public class ItemIcon : MonoBehaviour
     // Subscribe to the inventory update event in the Start method.
     private void Start() =>
         inventory.onInventoryUpdate.AddListener(UpdateIcon);
-    
+
 
     // Assign a new item to the icon.
-    public void AssignItem(Item newItem) =>
+    public void AssignItem(Item newItem) {
         item = newItem;
+        UpdateIcon();
+    }
 
     // Update the icon when dragging is active.
     private void Update()
     {
         if (!isBeingDragged || !Inventory.heldObject) return;
+        if (Inventory.heldObject.beingDragged == false) {
+            SetDragged(false);
+            return;
+        }
 
         Inventory.heldObject.transform.position = mousePosition;
     }
 
     // Update the icon when changes are made in the editor.
-    private void OnValidate() =>
-        UpdateIcon();
+    private void OnValidate() => UpdateIcon();
 
     // Update the icon's appearance based on the assigned item.
     public void UpdateIcon()
@@ -78,6 +83,8 @@ public class ItemIcon : MonoBehaviour
             
             Inventory.heldObject = ItemObject.Instantiate(item, mousePosition);
             Inventory.heldObject.SetToTopLayer(true);
+            Inventory.heldObject.beingDragged = true;
+
             inventory.RemoveItem(index);
         }
         else
@@ -92,8 +99,8 @@ public class ItemIcon : MonoBehaviour
             transform.position = returnPosition;
         }
 
-        iconImage.enabled = !active;
-        itemImage.enabled = !active;
+/*        iconImage.enabled = !active;
+        itemImage.enabled = !active;*/
         isBeingDragged = active;
     }
 

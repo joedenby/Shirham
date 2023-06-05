@@ -1,8 +1,5 @@
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
-using System.Diagnostics;
-using System.Threading.Tasks;
 
 public class AIPathFinder : MonoBehaviour
 {
@@ -114,7 +111,6 @@ public class AIPathFinder : MonoBehaviour
         AIPathGrid.main.path.Reverse();
         path = new Queue<Vector2>();
         AIPathGrid.main.path.ForEach(x => path.Enqueue(x.worldPosition));
-        path.Dequeue();
     }
 
     private int GetDistance(AIPathNode nodeA, AIPathNode nodeB)

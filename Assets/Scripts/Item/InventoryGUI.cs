@@ -67,9 +67,6 @@ public class InventoryGUI : MonoBehaviour
         // Inventory stay closed if no permission
         if (active && HasPermission(Inventory.InventoryRights.Disabled)) return;
 
-        // Inventory stay open on held item check
-        if (!active && Inventory.heldObject) return;
-
         // Show or hide the inventory window and bubble
         window.SetActive(active);
 
@@ -78,21 +75,18 @@ public class InventoryGUI : MonoBehaviour
 
         // Update the inventory if it is active
         if (!active) return;
+
         UpdateInventory();
     }
 
     // Update the inventory's icons with the current items
     public void UpdateInventory()
     {
-        if(!window.activeSelf) return;
-        
-        window.SetActive(isActiveWindow);
-        if (!isActiveWindow) return;
-
         var items = inventory.GetInventory;
         for (int i = 0; i < icons.Length; i++)
         {
             if (i >= items.Length) return;
+
             icons[i].AssignItem(items[i]);
             icons[i].gameObject.SetActive(i < items.Length);
             icons[i].GetComponent<Image>().enabled = true;
