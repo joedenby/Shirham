@@ -54,6 +54,9 @@ MonoBehaviour:
   item: {fileID: 0}
   spriteRenderer: {fileID: 7861139451988728987}
   outline: {fileID: 7861139450303379639}
+  equipLayer:
+    serializedVersion: 2
+    m_Bits: 64
   beingDragged: 0
 --- !u!114 &7861139450303379639
 MonoBehaviour:

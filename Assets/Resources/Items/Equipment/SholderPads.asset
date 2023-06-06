@@ -18,7 +18,7 @@ MonoBehaviour:
   weight: 0
   price: 0
   rarity: 0
-  equipType: 0
+  equipType: 1
   stats:
     str: 0
     mag: 0

@@ -16,6 +16,7 @@ public class ItemObject : Interactable
     private SpriteRenderer spriteRenderer;
     [SerializeField]
     private OutlineController outline;
+    [SerializeField] private LayerMask equipLayer;
 
     // Private fields for handling item's dragging and positioning
     private Vector3 _offset;
@@ -84,6 +85,7 @@ public class ItemObject : Interactable
     }
 
     private void Update() {
+        gameObject.layer = beingDragged ? 2 : 0;
         if (!beingDragged) return;
         if (!Input.GetKey(KeyCode.Mouse0)) {
             OnMouseUp();
@@ -113,7 +115,29 @@ public class ItemObject : Interactable
 
     // Snap the item's position to the grid, reset its layer, and activate pulse effect when the mouse button is released
     private void OnMouseUp()  {
-        Debug.Log($"Up {name}");
+        //Being equiped
+        if (item.GetType() == typeof(Equipment)) {
+            RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, 0.1f, Vector2.one, 0.2f, equipLayer);
+            if (hits.Length > 0)
+            {
+                foreach (RaycastHit2D hit in hits)
+                {
+                    var equipmanager = hit.transform.GetComponent<EquipmentManager>();
+                    if (!equipmanager) continue;
+
+                    equipmanager.EquipItem((Equipment)item, out Equipment prev);
+                    if (!prev) {
+                        Destroy(gameObject);
+                        Inventory.heldObject = null;
+                        return;
+                    }
+
+                    item = prev;
+                }
+            }
+        }
+
+        //Being dropped
         beingDragged = false;   
         SetToTopLayer(false);
         SetPulse(true);

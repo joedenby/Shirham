@@ -9,6 +9,12 @@ public class EquipmentGUI : MonoBehaviour
     [SerializeField] private Material spriteMat;
     [SerializeField] private Material outlineMat;
 
+
+    private void Start()
+    {
+        equipment = transform.parent.GetComponentInParent<EquipmentManager>();
+    }
+
     public void PopOff(string placement) {
         if (Enum.TryParse(placement, true, out EquipType equipType)) {
             Equipment item = equipment.GetItem(equipType);

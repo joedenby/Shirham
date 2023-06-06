@@ -45,7 +45,6 @@ public class Inventory : MonoBehaviour
         MakeLarge(isLarge);
     }
 
-
     // Update the inventory size and rearrange the items based on the "enabled" parameter
     public void MakeLarge(bool enabled) {
         isLarge = enabled;

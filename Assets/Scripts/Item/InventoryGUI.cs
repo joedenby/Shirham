@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.EventSystems;
 
 /**
  * ==================================  InventoryGUI.cs  =============================================
@@ -27,7 +28,6 @@ public class InventoryGUI : MonoBehaviour
     public static bool show => Inventory.heldObject || InputManager.PlayerInput.HUD.IsPressed();
 
 
-
     private void Awake()   {
         if (inventory) return;
 
@@ -47,8 +47,10 @@ public class InventoryGUI : MonoBehaviour
         transform.localScale = new Vector2(inventory.transform.localScale.x > 0 ? 1 : -1, 1);
 
         // Return if there is no active window or if it doesn't match the current instance
-        if (!activeWindow || !activeWindow.Equals(this)) return;
-
+        if (!activeWindow || !activeWindow.Equals(this)) {
+            return;
+        }
+        
         // Set the item if the left mouse button is released and an icon is selected
         if (Input.GetMouseButtonUp(0) && selectedIcon >= 0) {
             SetItem(selectedIcon);
@@ -127,4 +129,5 @@ public class InventoryGUI : MonoBehaviour
         Destroy(Inventory.heldObject.gameObject);
         Inventory.heldObject = null;
     }
+
 }
