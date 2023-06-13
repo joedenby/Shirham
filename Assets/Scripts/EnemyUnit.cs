@@ -81,12 +81,17 @@ public class EnemyUnit : UnitController
         RaycastHit2D obstacleHit = Physics2D.Raycast(origin, dir, sightRadius, obstacleLayer);
         if(obstacleHit)
         {
+            Debug.Log(obstacleHit.transform.name + " hit");
             return false;
         }
 
         RaycastHit2D hit = Physics2D.Raycast(origin, dir, sightRadius, sightLayer);
-        point = hit.point;
 
+        if (hit)
+        {
+            Debug.Log(hit.transform.name + " hit");
+        }
+        
         return hit.collider != null && hit.collider.CompareTag("Player");
     }
 
