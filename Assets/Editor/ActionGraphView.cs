@@ -15,6 +15,7 @@ public class ActionGraphView : GraphView
         this.editorWindow = editorWindow;
         actionBlueprint = blueprint;
 
+
         // This makes the graph view zoomable.
         SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 
@@ -45,9 +46,6 @@ public class ActionGraphView : GraphView
         // Create a new instance of the specified node type
         ActionNode baseNodeInstance = (ActionNode)Activator.CreateInstance(nodeType);
 
-        // Create a visual representation of the node
-        Node newNode = baseNodeInstance.GetNodeRepresentation();
-
         // create a new NodeData object
         NodeData newNodeData = new NodeData
         {
@@ -72,7 +70,7 @@ public class ActionGraphView : GraphView
         baseNodeInstance.pickingMode = PickingMode.Position;
 
         // Add the node to the graph
-        AddElement(newNode);
+        AddElement(baseNodeInstance.GetNodeRepresentation());
     }
 
     public void LoadBlueprint(ActionBlueprint blueprint)
@@ -95,6 +93,21 @@ public class ActionGraphView : GraphView
 
         // Additional logic to create connections between nodes based on the blueprint
         Debug.Log($"Loaded blueprint: {blueprint.name}");
+    }
+
+    public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
+    {
+        var compatiblePorts = new List<Port>();
+
+        ports.ForEach((port) =>
+        {
+            if (startPort != port && startPort.node != port.node) { 
+                if(port.portType == startPort.portType) 
+                    compatiblePorts.Add(port); 
+            }
+        });
+
+        return compatiblePorts;
     }
 
     private void AddSearchWindow(EditorWindow editorWindow)

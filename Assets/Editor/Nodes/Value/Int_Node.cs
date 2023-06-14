@@ -1,5 +1,6 @@
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 public class Int_Node : ActionNode
@@ -12,17 +13,31 @@ public class Int_Node : ActionNode
         Node node = new Node
         {
             title = "Int",
-            style = { width = 100, height = 100 }
+            style = { width = 90, height = 100 }
         };
+
+        node.inputContainer.style.display = DisplayStyle.None;
+        node.mainContainer.style.flexDirection = FlexDirection.Column; // Stack children vertically
+
+        // Create a spacer to push the input field down
+        VisualElement spacer = new VisualElement();
+        spacer.style.flexGrow = 1;
+        node.mainContainer.Add(spacer);
 
         // Create an input field for the integer value
         IntegerField inputField = new IntegerField();
+        inputField.style.unityTextAlign = TextAnchor.MiddleCenter; // Center the text
+        inputField.style.width = 50; // Reduce width
+        inputField.style.height = 20; // Increase height
+        inputField.style.alignSelf = Align.Center; // Center the field horizontally
+
         inputField.RegisterValueChangedCallback(evt =>
         {
             // Handle the value change event
             value = evt.newValue;
-            title = $"Int [{value}]";
         });
+
+        node.mainContainer.Add(inputField);
 
         node.mainContainer.Add(inputField);
 
