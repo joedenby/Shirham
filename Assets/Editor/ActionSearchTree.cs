@@ -86,6 +86,7 @@ public class ActionSearchTree : ScriptableObject, ISearchWindowProvider
     public static List<Type> GetDerivedTypesOfActionNode()
     {
         List<Type> derivedTypes = new List<Type>();
+        Assembly assembly = Assembly.GetAssembly(typeof(ActionNode<>)); // using ActionNode<> gets the generic type definition
         Type baseType = typeof(ActionNode<>);
 
         foreach (Type type in assembly.GetTypes())
