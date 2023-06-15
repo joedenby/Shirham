@@ -1,12 +1,16 @@
-using UnityEditor.Experimental.GraphView;
-using UnityEngine;
+using System;
 
-public abstract class ActionNode : Node
+public abstract class ActionNode<T> : ActionNodeBase
 {
-    public string GUID;
-    public Vector2 position;
-    public abstract string Category { get; }
+    public Func<T> operation; // The delegate representing the operation this instance of node performs
 
-    public abstract Node GetNodeRepresentation();
 
+    // Function to evaluate this node's operation and produce a result
+    public T Evaluate()
+    {
+        if (operation != null)
+            return operation();
+        else
+            throw new Exception($"No operation for {GetType().Name} defined!");
+    }
 }

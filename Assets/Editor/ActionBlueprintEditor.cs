@@ -42,6 +42,35 @@ public class ActionBlueprintEditor : EditorWindow
         actionGraphView.LoadBlueprint(currentBlueprint);
 
         ConstructGraphView();
+        ConstructUI();
+    }
+
+    private void ConstructUI()
+    {
+        var debugButton = new Button(DebugSelectedNode)
+        {
+            text = "Debug Selected Node"
+        };
+
+        rootVisualElement.Add(debugButton);
+    }
+
+    private void DebugSelectedNode()
+    {
+        if (actionGraphView.selection.Count == 0)
+        {
+            Debug.LogWarning("No node selected for debugging.");
+            return;
+        }
+
+        foreach (var selectable in actionGraphView.selection)
+        {
+            if (selectable is ActionNodeBase node)
+            {
+                Debug.Log("Debug Output for Node with GUID: " + node.GUID);
+               // node.DebugOutput();
+            }
+        }
     }
 
     private void ConstructGraphView()
@@ -53,5 +82,4 @@ public class ActionBlueprintEditor : EditorWindow
     }
 
 
-    // Additional methods for loading, saving, etc. go here
 }

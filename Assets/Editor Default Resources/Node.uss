@@ -1,0 +1,4 @@
+.exitNode {
+    --unity-background-color: #ff0000;
+}
+

@@ -1,3 +1,5 @@
+using Codice.CM.SEIDInfo;
+using Codice.CM.WorkspaceServer.DataStore;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
@@ -15,7 +17,6 @@ public class ActionGraphView : GraphView
         this.editorWindow = editorWindow;
         actionBlueprint = blueprint;
 
-
         // This makes the graph view zoomable.
         SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 
@@ -28,6 +29,10 @@ public class ActionGraphView : GraphView
 
         AddSearchWindow(editorWindow);
         AddStyle();
+
+        if (actionBlueprint.nodeDataList.Count > 0) return;
+
+        AddElement(GenerateExitNode().GetNodeRepresentation());
     }
 
     private void AddStyle() {
@@ -44,7 +49,7 @@ public class ActionGraphView : GraphView
     public void CreateNode(Type nodeType, Vector2 position)
     {
         // Create a new instance of the specified node type
-        ActionNode baseNodeInstance = (ActionNode)Activator.CreateInstance(nodeType);
+        ActionNodeBase baseNodeInstance = (ActionNodeBase)Activator.CreateInstance(nodeType);
 
         // create a new NodeData object
         NodeData newNodeData = new NodeData
@@ -55,8 +60,7 @@ public class ActionGraphView : GraphView
         };
 
         // Initialize the nodeDataList if it is null
-        if (actionBlueprint.nodeDataList == null)
-        {
+        if (actionBlueprint.nodeDataList == null) {
             actionBlueprint.nodeDataList = new List<NodeData>();
         }
 
@@ -76,23 +80,30 @@ public class ActionGraphView : GraphView
     public void LoadBlueprint(ActionBlueprint blueprint)
     {
         // Clear the current view
-        this.Clear();
+        Clear();
 
-        if (blueprint.nodeDataList is not null) {
-            // For each NodeData in the blueprint
-            foreach (NodeData nodeData in blueprint.nodeDataList)
-            {
-                // Create the corresponding ActionNode
-                Type nodeType = Type.GetType(nodeData.nodeType);
-                ActionNode newNode = (ActionNode)Activator.CreateInstance(nodeType);
+        // For each NodeData in the blueprint
+        foreach (NodeData nodeData in blueprint.nodeDataList)
+        {
+            // Create the corresponding ActionNode
+            Type nodeType = Type.GetType(nodeData.nodeType);
+            Debug.Log($"Type: {nodeType.Name}");
+            ActionNodeBase newNode = (ActionNodeBase)Activator.CreateInstance(nodeType);
 
-                // Add the new node to the GraphView
-                AddElement(newNode.GetNodeRepresentation());
-            }
+            // Assign NodeData properties to the new node
+            newNode.GUID = nodeData.nodeGUID;
+            newNode.position = nodeData.position;
+
+            // Add the new node to the GraphView
+            AddElement(newNode.GetNodeRepresentation());
         }
 
         // Additional logic to create connections between nodes based on the blueprint
         Debug.Log($"Loaded blueprint: {blueprint.name}");
+    }
+    private Exit_Node GenerateExitNode() { 
+        var exitNode = new Exit_Node();
+        return exitNode;
     }
 
     public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
@@ -109,6 +120,8 @@ public class ActionGraphView : GraphView
 
         return compatiblePorts;
     }
+
+   
 
     private void AddSearchWindow(EditorWindow editorWindow)
     {

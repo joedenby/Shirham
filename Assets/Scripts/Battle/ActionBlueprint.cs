@@ -15,9 +15,7 @@ public class NodeData
     public string nodeGUID; // unique identifier for this node
     public string nodeType; // type of this node (Int, Elemental, Resistance, GetSquaresRadial, PlayUnitAnimation, etc.)
     public Vector2 position; // position of the node in the graph
-
-    // For parameters, we can have a list of tuples. The first element in the tuple is the parameter type, and the second is the value.
-    public List<Tuple<string, string>> parameters = new List<Tuple<string, string>>();
+    public object value;    // data stored in the node, like an int or vector2
 
     // For ports, we need to store their name, type and whether they are essential or not
     public List<PortData> inputPorts = new List<PortData>();

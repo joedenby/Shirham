@@ -3,10 +3,14 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Int_Node : ActionNode
+public class Int_Node : ActionNode<int>
 {
     public override string Category => "Value";
     public int value;
+
+    public Int_Node() {
+        operation = () => value;
+    }
 
     public override Node GetNodeRepresentation()
     {
@@ -42,7 +46,7 @@ public class Int_Node : ActionNode
         node.mainContainer.Add(inputField);
 
         // Create an output port for the node
-        Port outputPort = node.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(int));
+        Port outputPort = node.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(int));
         outputPort.portName = "Output";
         node.outputContainer.Add(outputPort);
 

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine.UIElements;
 using UnityEngine;
 
 public class ActionSearchTree : ScriptableObject, ISearchWindowProvider
@@ -12,7 +12,6 @@ public class ActionSearchTree : ScriptableObject, ISearchWindowProvider
     private ActionGraphView actionGraphView;
     private EditorWindow editorWindow; 
     private Texture2D indentIcon;
-
 
     public void Init(EditorWindow editorWindow, ActionGraphView actionGraphView)
     {
@@ -32,8 +31,9 @@ public class ActionSearchTree : ScriptableObject, ISearchWindowProvider
             new SearchTreeGroupEntry(new GUIContent("Create Node"), 0)
         };
 
+
         // Get all types derived from ActionNode
-        var derivedTypes = GetDerivedTypes<ActionNode>();
+        var derivedTypes = GetDerivedTypesOfActionNode();
         derivedTypes.OrderByDescending(evt => 
             (string)evt.GetProperty("Category", BindingFlags.Instance | BindingFlags.Public).GetValue(Activator.CreateInstance(evt)));
 
@@ -43,21 +43,24 @@ public class ActionSearchTree : ScriptableObject, ISearchWindowProvider
             var categoryProperty = derivedType.GetProperty("Category", BindingFlags.Instance | BindingFlags.Public);
             string typeName = derivedType.Name.Replace("_", " "); // Replace underscore with blank space
             typeName = typeName.Replace("Node", string.Empty);
-            
+
             if (categoryProperty != null)
             {
                 string category = (string)categoryProperty.GetValue(Activator.CreateInstance(derivedType));
+                if (category.Equals("Hidden")) continue;
 
-                if (!category.Equals(prev)) {
+                if (!category.Equals(prev))
+                {
                     tree.Add(new SearchTreeGroupEntry(new GUIContent(category), 1));
                     prev = category;
                 }
-                
+
                 tree.Add(new SearchTreeEntry(new GUIContent(typeName))
                 {
                     level = 2,
                     userData = derivedType
                 });
+
             }
         }
 
@@ -66,34 +69,51 @@ public class ActionSearchTree : ScriptableObject, ISearchWindowProvider
 
     public bool OnSelectEntry(SearchTreeEntry entry, SearchWindowContext context)
     {
+        var worldMousePosition = editorWindow.rootVisualElement.ChangeCoordinatesTo(editorWindow.rootVisualElement.parent, context.screenMousePosition - editorWindow.position.position);
+        var localMousePosition = actionGraphView.contentViewContainer.WorldToLocal(worldMousePosition);
+
         // Check if this is an actual node entry (i.e. not a group entry)
         if (entry.userData is Type nodeType)
         {
-            actionGraphView.CreateNode(nodeType, context.screenMousePosition);
+            actionGraphView.CreateNode(nodeType, localMousePosition);
+            Debug.Log($"Creating node at {localMousePosition}");
             return true;
         }
 
         return false;
     }
 
-    // This method returns all types derived from the specified base type
-    private static IEnumerable<Type> GetDerivedTypes<T>() where T : Node
+    public static List<Type> GetDerivedTypesOfActionNode()
     {
         List<Type> derivedTypes = new List<Type>();
-        Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        Type baseType = typeof(ActionNode<>);
 
-        foreach (Assembly assembly in assemblies)
+        foreach (Type type in assembly.GetTypes())
         {
-            Type[] types = assembly.GetTypes();
-            foreach (Type type in types)
+            if (type.IsClass && !type.IsAbstract && type.IsSubclassOfRawGeneric(baseType))
             {
-                if (type.IsSubclassOf(typeof(T)))
-                {
-                    derivedTypes.Add(type);
-                }
+                derivedTypes.Add(type);
             }
         }
 
         return derivedTypes;
+    }
+
+}
+
+public static class TypeExtensions
+{
+    public static bool IsSubclassOfRawGeneric(this Type toCheck, Type generic)
+    {
+        while (toCheck != null && toCheck != typeof(object))
+        {
+            var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+            if (generic == cur)
+            {
+                return true;
+            }
+            toCheck = toCheck.BaseType;
+        }
+        return false;
     }
 }

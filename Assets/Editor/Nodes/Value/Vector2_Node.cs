@@ -3,12 +3,16 @@ using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-public class Vector2_Node : ActionNode
+public class Vector2_Node : ActionNode<Vector2>
 {
     private FloatField xField;
     private FloatField yField;
     private Vector2 vector2Value;
     public override string Category => "Value";
+
+    public Vector2_Node() {
+        operation = () => vector2Value;
+    }
 
     public override Node GetNodeRepresentation()
     {
